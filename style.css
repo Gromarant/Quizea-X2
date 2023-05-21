@@ -21,8 +21,11 @@ nav {
   position: sticky;
   top: 0;
 }
-main {
-  height: 100vh;
+article {
+   color: #FFFFFF;
+}
+input {
+  font-size: 2.4rem;
 }
 footer {
   position: sticky;
@@ -31,6 +34,13 @@ footer {
   background-color: #000000;
 }
 
+
+.flexColumnCenter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .flexRowCenter {
   display: flex;
   justify-content: center;
@@ -58,4 +68,12 @@ footer {
   background-color: #000000;
   border: solid 0.2rem #A42FC1;
   border-radius: 1.4rem;
+}
+
+
+#question {
+  gap: 6rem;
+}
+#question > article {
+  font-size: 3.2rem;
 }
