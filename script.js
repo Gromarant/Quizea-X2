@@ -40,25 +40,51 @@ let respApi = {
   ]
 };
 
-const endpoint = "https://opentdb.com/api.php?amount=10&type=multiple";
+// const endpoint = "https://opentdb.com/api.php?amount=10&type=multiple";
 
-fetch(endpoint)
-  .then(response => response.json())
-  .then(data => {
-    let arrQuestions = data.results; /* array de preguntas */ 
-    let questionIndex = 0;
-    let totalQuestions = arrQuestions.length;
+// let questionsArr;
 
-    printQuestion(arrQuestions[questionIndex]);
+// const apiRequest = () => {
+//   fetch(endpoint)
+//     .then(response => response.json())
+//     .then(data => {
+//       questionsArr = data.results /* array de preguntas */ 
+//     })
+// }
 
-    const printNextQuestion = () => {
-      if(questionIndex < totalQuestions) {
-        questionIndex += 1
-        if(questionIndex === totalQuestions) {
-          document.querySelector('#next').innerHTML = 'Ver resultados';
-          /*código para cambiar a la siguiente pantalla*/
-        }
-      } 
+let questionIndex = 0;
+
+printQuestion(respApi.results[questionIndex]);
+const printNextQuestion = () => {
+  if(questionIndex < totalQuestions) {
+    questionIndex += 1
+    if(respApi.results.length === totalQuestions) {
+      document.querySelector('#next').innerHTML = 'Ver resultados';
+      /*código para cambiar a la siguiente pantalla*/
     }
-    document.querySelector('#next').addEventListener('click', printNextQuestion);
-  });
+  } 
+}
+document.querySelector('#next').addEventListener('click', printNextQuestion);
+
+function printQuestion(object) {
+  let answers = shuffled( getAnswersOneQuestion(object) ); //obtiene y sortea las respuestas
+
+  document.getElementById('question').innerHTML = 
+  `<article>
+      <p class="breadcrumbs">Question 1/${respApi.results.length}</p>
+      <p id="question">${object.question}</p>
+    </article>
+    <input type="text" name="answer" id="answer1" value="${answers[0]}">
+    <input type="text" name="answer" id="answer2" value="${answers[1]}">
+    <input type="text" name="answer" id="answer3" value="${answers[2]}">
+    <input type="text" name="answer" id="answer4" value="${answers[3]}">`
+}
+
+function shuffled(elements) {   /*---> mezcla las preguntas y o las respuestas */
+  return elements.sort(() => Math.random() -0.5);
+}
+
+function getAnswersOneQuestion({correct_answer, incorrect_answers}) { /*---> busca las respuestas correcta */
+  let allanswers = [correct_answer, ...incorrect_answers];
+  return allanswers;
+}
