@@ -77,10 +77,18 @@ function printQuestion(object) {
     <p class="breadcrumbs">Question ${questionIndex + 1}/${respApi.results.length}</p>
     <p id="question">${object.question}</p>
   </article>
-  <input type="text" name="answer" id="answer1" value="${answers[0]}">
-  <input type="text" name="answer" id="answer2" value="${answers[1]}">
-  <input type="text" name="answer" id="answer3" value="${answers[2]}">
-  <input type="text" name="answer" id="answer4" value="${answers[3]}">`
+  <label for="answer1">${answers[0]}
+    <input type="radio" name="answer" id="answer1">
+  </label>
+  <label for="answer2">${answers[1]}
+    <input type="radio" name="answer" id="answer2">
+  </label>
+  <label for="answer3">${answers[2]}
+    <input type="radio" name="answer" id="answer3">
+  </label>
+  <label for="answer4">${answers[3]}
+    <input type="radio" name="answer" id="answer4">
+  </label>`
 }
 
 function shuffled(elements) {   /*---> mezcla las preguntas y o las respuestas */
