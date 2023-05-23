@@ -16,10 +16,30 @@
     </header>
     <main>
       <form id="question" class="flexColumnCenter"></form>
+      
+      <section id="results" class="hidden">
+        <article class="scoreSection">
+          <div class="flexRowCenter">
+            <p class="breadcrumbAnswer correct">7</p>
+            <p class="totalQuestions">10</p>
+            <p class="breadcrumbAnswer incorrect">3</p>
+          </div>
+          <p>Score</p>
+          <p class="totalScore">7/3</p>
+        </article>
+        <img class="graphic" src="/assets/images/grafica.svg">
+      </section>
     </main>
+
     <footer class="flexRowCenter">
       <button class="btn outlineBtn" id="next">Siguiente</button>
+      <section class="resultMenu spaceAround hidden">
+        <span class="iconify" data-icon="ion:home"></span>
+        <span class="iconify" data-icon="ion:reload-circle"></span>
+        <span class="iconify" data-icon="carbon:view-filled"></span>
+      </section>
     </footer>
+
     <script src="script.js"></script>
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 </body>
