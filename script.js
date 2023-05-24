@@ -1,3 +1,17 @@
+//Llamada a la API
+// const endpoint = "https://opentdb.com/api.php?amount=10&type=multiple";
+
+// let questionsArr;
+// fetch(endpoint)
+//   .then(response => response.json())
+//   .then(data => {
+//     questionsArr = data.results /* array de preguntas */ 
+//   })
+// console.log(questionsArr)
+// console.log(apiRequest());
+
+
+//Modelo de respuesta de la API
 let respApi = {
   "response_code": 0,
   "results": [
@@ -38,45 +52,83 @@ let respApi = {
       ]
     },
   ]
-};
+};                  
 
-// const endpoint = "https://opentdb.com/api.php?amount=10&type=multiple";
-
-// let questionsArr;
-// fetch(endpoint)
-//   .then(response => response.json())
-//   .then(data => {
-//     questionsArr = data.results /* array de preguntas */ 
-//   })
-// console.log(questionsArr)
-// console.log(apiRequest());
-
+//Inicialización de variables
 let questionIndex = 0;
 let currentQuestionNumber = 1;
 let allCorrectAnswers = [];
-let currentgameData = []; /* Se puede agregar a este elemento la propiedad 'date', con el valor de la fecha de jugada para que funcione como un id y guardar los*/
+let selectedAnswers = [];
+let gamesHistoryData = []; /* Se puede agregar a este elemento la propiedad 'date', con el valor de la fecha de jugada para que funcione como un id y guardar los*/
+
+//variables que rellenar para darle valor las propiedades de la coleccion ---> gamesHistoryData <---
+//las he inicializado para que no de ERROR EN LA CONSOLA
+let playerId; 
+let gameDate;
+let gameHour;
+let isCorrectAnswerSelected;
+
+//Modelo de datos para guardar las partidas
+gamesHistoryData = 
+{ 
+  id: playerId,     
+  games: [ //--> hictórico de partidas jugadas
+    { 
+      date: gameDate, //--> fecha de la jugada
+      hour: gameHour, //--> hora de la jugada
+      questions: [
+        {
+        "isSelectTheCorrectAnswer": isCorrectAnswerSelected,  /*-->Variable de si contestó correctamente*/
+        "category": "Entertainment: Books",
+        "type": "multiple",
+        "difficulty": "easy",
+        "question": "George Orwell wrote this book, which is often considered a statement on government oversight.",
+        "correct_answer": "1984",
+        "incorrect_answers": ["The Old Man and the Sea", "Catcher and the Rye", "To Kill a Mockingbird" ]
+      }, 
+      {
+        "userGivenAnswer": isCorrectAnswerSelected,  /*-->Variable de si contestó correctamente*/
+        "category": "Entertainment: Books",
+        "type": "multiple",
+        "difficulty": "easy",
+        "question": "George Orwell wrote this book, which is often considered a statement on government oversight.",
+        "correct_answer": "1984",
+        "incorrect_answers": ["The Old Man and the Sea", "Catcher and the Rye", "To Kill a Mockingbird" ]
+      }, 
+    ] 
+    }
+  ]
+}
 
 //Pinta la primera pregunta
 printQuestion(respApi.results[questionIndex]);
 
-/*---> mezcla las preguntas y o las respuestas */
+// /*---> mezcla las preguntas y o las respuestas */
 function shuffled(elements) {   
   return elements.sort(() => Math.random() -0.5);
 }
 
-/*---> busca las respuestas correcta */
-function getAnswersOneQuestion({correct_answer, incorrect_answers}) { 
-  let allanswers = [correct_answer, ...incorrect_answers];
-  return allanswers;
+/*---> Une en un array las respuestas de una pregunta */
+function getAnswersOneQuestion({correct_answer, incorrect_answers}) {
+  let allanswers;
+
+  if (questionIndex < respApi.results.length) {
+    allanswers = [correct_answer, ...incorrect_answers];
+    return allanswers;
+  }
 }
 
 //Pinta en el DOM las preguntas y respuestas una a una
 function printQuestion(object) {
-  answers = shuffled( getAnswersOneQuestion(object) ); //obtiene y sortea las respuestas
-  
+  let answers = getAnswersOneQuestion(object);
+
+  if (respApi.results) {
+    shuffled(answers); /*obtiene y sortea las respuestas*/
+  }
+
   document.getElementById('question').innerHTML = 
   `<article>
-    <p class="breadcrumbs">Question ${currentQuestionNumber}/${respApi.results.length}</p>
+    <p class="breadcrumbs">Question ${currentQuestionNumber}/${object.length}</p>
     <p id="question">${object.question}</p>
   </article>
   <label class="formLabel" for="answer1">${answers[0]}
@@ -105,6 +157,7 @@ const printNextQuestion = () => {
 
     if(questionIndex === respApi.results.length) {
       document.querySelector('.nextElementBtn').innerHTML = 'Ver resultados';
+      getPlayerAnswersFromLocalStorage()
       /*código para cambiar a la siguiente pantalla*/
     }
   } 
@@ -137,22 +190,30 @@ function handleSelectAnswer(e) {
 
 //Toma del localStorage las respuestas seleccionadas por los jugadores
 function getPlayerAnswersFromLocalStorage() {
-  let selectedAnswers = [];
 
   for (let index=0; index<respApi.results.length; index++) {
     selectedAnswers.push(JSON.parse(localStorage.getItem(`question${index}`)));
   }
-  return selectedAnswers;
+  return selectedAnswers
 }
 
 //obtiene las respuestas correctas y retorna un array
 const getAllCorrectAnswer = () => {
   for (let i=0; i<respApi.results.length; i++) {
-    allCorrectAnswers += respApi.results[i].correct_answer;
-    return allCorrectAnswers;
+    allCorrectAnswers.push(respApi.results[i].correct_answer);
   }
+  return allCorrectAnswers;
 }
-getAllCorrectAnswer()
+
+//Función para mostrar un elemento escondido
+const showElement = (elementToShow) => {
+  elementToShow.classList.remove('hidden');
+}
+
+//Función para esconder un elemento
+const hideElement = (elementToHide) => {
+  elementToHide.classList.add('hidden');
+}
 
 //Eventos
 document.querySelector('#next').addEventListener('click', printNextQuestion);
