@@ -5,7 +5,7 @@
 // fetch(endpoint)
 //   .then(response => response.json())
 //   .then(data => {
-//     questionsArr = data.results /* array de preguntas */ 
+//     questionsArr = data.results /* array de preguntas */
 //   })
 // console.log(questionsArr)
 // console.log(apiRequest());
@@ -52,7 +52,7 @@ let respApi = {
       ]
     },
   ]
-};                  
+};
 
 //Inicialización de variables
 let questionIndex = 0;
@@ -65,18 +65,18 @@ let displayHomeBtns = [];
 let displayQuizBtns = [];
 let displayReviewBtns = [];
 
-let playerId; 
+let playerId;
 let nickName;
 
 //Modelo de datos para guardar las partidas
 let gamesHistoryData = [
-  { 
-    playerId,  
-    nickName,   
+  {
+    playerId,
+    nickName,
     games: [
-      { 
-        gameDate: dataTime.date, 
-        gameHour: dataTime.hour, 
+      {
+        gameDate: dataTime.date,
+        gameHour: dataTime.hour,
         "isSelectedTheCorrectAnswer": comparedAnswers[questionIndex],  /*-->Variable de si contestó correctamente*/
         questions: [
           {
@@ -90,7 +90,7 @@ let gamesHistoryData = [
 
 
 // /*---> mezcla las preguntas y o las respuestas */
-function shuffled(elements) {   
+function shuffled(elements) {
   return elements.sort(() => Math.random() -0.5);
 }
 
@@ -107,8 +107,8 @@ function getAnswersOneQuestion({correct_answer, incorrect_answers}) {
 //Pinta en el DOM las preguntas y respuestas una a una
 function printQuestion(object) {
   let answers = shuffled( getAnswersOneQuestion(object) );
-  
-  document.getElementById('quiz').innerHTML = 
+
+  document.getElementById('quiz').innerHTML =
   `<article>
     <p class="breadcrumbs">Question ${currentQuestionNumber}/${object.length}</p>
     <p id="question">${object.question}</p>
@@ -129,18 +129,18 @@ function printQuestion(object) {
 
 //Pinta en el DOM las preguntas y respuestas una a una
 const printNextQuestion = () => {
-  
+
   if (questionIndex < respApi.results.length) {
-    questionIndex++; 
+    questionIndex++;
     currentQuestionNumber++;
-    printQuestion(respApi.results[questionIndex]) 
+    printQuestion(respApi.results[questionIndex])
 
     if(questionIndex === respApi.results.length) {
       document.querySelector('.nextElementBtn').innerHTML = 'Ver resultados';
       getPlayerAnswersFromLocalStorage()
-      addClass(document.querySelector('.nextElementBtn'), 'navigateToResultsBtn')
+      addClass(document.querySelector('#nextElementBtn'), 'navigateToResultsBtn')
     };
-  }; 
+  };
 };
 
 //Función manejadora del evento click en label y radio button
@@ -180,16 +180,111 @@ const getAllCorrectAnswer = () => {
 };
 
 
-//Función para mostrar un elemento escondido
-const showElement = (elementToShow) => {
-  elementToShow.classList.remove('hidden');
+//---> Mostrar las secciones de main necesarias para cada pantalla
+const gameSections = {
+  home: {
+    id: 'home',
+  },
+  quiz: {
+    id: 'quiz',
+  },
+  results: {
+    id: 'results',
+  },
+  review: {
+    id: 'review',
+  },
+};
+
+
+//verifica por Id la sección a mostrar
+function displaySection(SectionId) {
+  const sectionsOfPage = Object.values(gameSections)
+
+  sectionsOfPage.forEach(sectionPage => {
+    const section = document.getElementById(sectionPage.id);
+
+    if (section.id === SectionId) {
+      section.classList.remove('hidden');
+    } else {
+      section.classList.add('hidden');
+    };
+  });
+};
+
+//---> Asigna el evento click a una colección
+const setEventListenerOfClickEvent = (targetElementsArr, handlerFunction) => {
+  targetElementsArr.forEach(element => {
+    element.addEventListener('click', handlerFunction);
+})};
+
+//mostrar o escoder un elemento
+const showElement = (elementToShow) => elementToShow.classList.remove('hidden');
+const hideElement = (elementToHide) => elementToHide.classList.add('hidden');
+
+//Quitar o agregar una clase a un elemento
+const removeClass = (elementWhereRemove, elementClass) => elementWhereRemove.classList.remove(elementClass);
+const addClass = (elementWhereAdd, newClass) => elementWhereAdd.classList.add(newClass);
+
+
+//obtiene la referencia a los botones que despliegan una sección
+const getDisplayBtn = (buttonsCollection, classNameOfBtn) => buttonsCollection.push( document.querySelectorAll(classNameOfBtn) );
+
+//Despliegado de las secciones de la app
+function navigateToHome() {
+  hideElement( document.querySelector('.nextElementBtn') );
+  hideElement( document.querySelector('#score') );
+  displaySection(gameSections.home);
+  setEventListenerOfClickEvent(document.querySelectorAll('.navigateToQuizBtn'), navigateToQuiz);
 }
 
-//Función para esconder un elemento
-const hideElement = (elementToHide) => {
-  elementToHide.classList.add('hidden');
+function navigateToQuiz() {
+  document.querySelector('#footerActionBtn').innerHTML = 'Siguiente';
+  showElement( document.querySelector('#footerActionBtn') );
+  // setEventListenerOfClickEvent(document.querySelectorAll('.formLabel'), handleSelectAnswer);
+  displaySection(gameSections.quiz);
+  printQuestion(respApi.results[questionIndex]);
+};
+
+function navigateToResults() {
+  hideElement( document.querySelector('#footerActionBtn') );
+  showElement( document.querySelector('.resultMenu') );
+  displaySection(gameSections.results);
+  storeDateTime();
+  setComparedAnswers();
+  setGamesHistoryDataStructure(); //se muestra la estructura de datos
+};
+
+function navigateReview() { //Agregar respuestas
+  hideElement( document.querySelector('#footerActionBtn') );
+  showElement( document.querySelector('.resultMenu') );
+
+  displaySection(gameSections.review);
+};
+
+
+//Obtiene fecha y hora de la partida
+function storeDateTime() {
+  let now = new Date();
+  let date = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+  let hour = `${now.getHours()}:${now.getMinutes()}`;
+
+  dataTime.push(date, hour);
 }
+
+
+//Compara las respuestas correctas de cada pregunta con las respuestas
+function setComparedAnswers() {
+
+  for (let i = 0; i < allCorrectAnswers.length; i++) {
+    comparedAnswers.push(allCorrectAnswers[i] === selectedAnswers[i]);
+  };
+};
 
 //Eventos
-document.querySelector('#next').addEventListener('click', printNextQuestion);
-document.querySelector('#question').addEventListener('click', handleSelectAnswer);
+//---> nextElementBtn agregar esta clase al pasar al quiz
+document.querySelector('.navigateToQuizBtn').addEventListener('click', navigateToQuiz)
+// setEventListenerOfClickEvent(document.querySelectorAll('.navigateToResultsBtn', navigateToResults));
+// setEventListenerOfClickEvent(document.querySelectorAll('.navigateReviewBtn', navigateReview));
+// document.querySelector('#footerActionBtn').addEventListener('click', printNextQuestion);
+// document.querySelector('#quiz').addEventListener('click', handleSelectAnswer);
