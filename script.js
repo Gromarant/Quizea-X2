@@ -59,49 +59,35 @@ let questionIndex = 0;
 let currentQuestionNumber = 1;
 let allCorrectAnswers = [];
 let selectedAnswers = [];
-let gamesHistoryData = []; /* Se puede agregar a este elemento la propiedad 'date', con el valor de la fecha de jugada para que funcione como un id y guardar los*/
+let comparedAnswers = [];
+let dataTime = [];
+let displayHomeBtns = [];
+let displayQuizBtns = [];
+let displayReviewBtns = [];
 
-//variables que rellenar para darle valor las propiedades de la coleccion ---> gamesHistoryData <---
-//las he inicializado para que no de ERROR EN LA CONSOLA
 let playerId; 
-let gameDate;
-let gameHour;
-let isCorrectAnswerSelected;
+let nickName;
 
 //Modelo de datos para guardar las partidas
-gamesHistoryData = 
-{ 
-  id: playerId,     
-  games: [ //--> hictórico de partidas jugadas
-    { 
-      date: gameDate, //--> fecha de la jugada
-      hour: gameHour, //--> hora de la jugada
-      questions: [
-        {
-        "isSelectTheCorrectAnswer": isCorrectAnswerSelected,  /*-->Variable de si contestó correctamente*/
-        "category": "Entertainment: Books",
-        "type": "multiple",
-        "difficulty": "easy",
-        "question": "George Orwell wrote this book, which is often considered a statement on government oversight.",
-        "correct_answer": "1984",
-        "incorrect_answers": ["The Old Man and the Sea", "Catcher and the Rye", "To Kill a Mockingbird" ]
-      }, 
-      {
-        "userGivenAnswer": isCorrectAnswerSelected,  /*-->Variable de si contestó correctamente*/
-        "category": "Entertainment: Books",
-        "type": "multiple",
-        "difficulty": "easy",
-        "question": "George Orwell wrote this book, which is often considered a statement on government oversight.",
-        "correct_answer": "1984",
-        "incorrect_answers": ["The Old Man and the Sea", "Catcher and the Rye", "To Kill a Mockingbird" ]
-      }, 
-    ] 
-    }
-  ]
-}
+let gamesHistoryData = [
+  { 
+    playerId,  
+    nickName,   
+    games: [
+      { 
+        gameDate: dataTime.date, 
+        gameHour: dataTime.hour, 
+        "isSelectedTheCorrectAnswer": comparedAnswers[questionIndex],  /*-->Variable de si contestó correctamente*/
+        questions: [
+          {
+            ...respApi.results[questionIndex]
+          },
+        ],
+      },
+    ],
+  },
+];
 
-//Pinta la primera pregunta
-printQuestion(respApi.results[questionIndex]);
 
 // /*---> mezcla las preguntas y o las respuestas */
 function shuffled(elements) {   
@@ -110,23 +96,19 @@ function shuffled(elements) {
 
 /*---> Une en un array las respuestas de una pregunta */
 function getAnswersOneQuestion({correct_answer, incorrect_answers}) {
-  let allanswers;
+  let allAnswers;
 
   if (questionIndex < respApi.results.length) {
-    allanswers = [correct_answer, ...incorrect_answers];
-    return allanswers;
+    allAnswers = [correct_answer, ...incorrect_answers];
+    return allAnswers;
   }
 }
 
 //Pinta en el DOM las preguntas y respuestas una a una
 function printQuestion(object) {
-  let answers = getAnswersOneQuestion(object);
-
-  if (respApi.results) {
-    shuffled(answers); /*obtiene y sortea las respuestas*/
-  }
-
-  document.getElementById('question').innerHTML = 
+  let answers = shuffled( getAnswersOneQuestion(object) );
+  
+  document.getElementById('quiz').innerHTML = 
   `<article>
     <p class="breadcrumbs">Question ${currentQuestionNumber}/${object.length}</p>
     <p id="question">${object.question}</p>
@@ -143,9 +125,7 @@ function printQuestion(object) {
   <label class="formLabel" for="answer4">${answers[3]}
     <input type="radio" class="radio" name="answer" id="answer4" value="${answers[3]}">
   </label>`
-
-}
-document.querySelector('.formLabel').addEventListener('click', handleSelectAnswer)
+};
 
 //Pinta en el DOM las preguntas y respuestas una a una
 const printNextQuestion = () => {
@@ -158,16 +138,10 @@ const printNextQuestion = () => {
     if(questionIndex === respApi.results.length) {
       document.querySelector('.nextElementBtn').innerHTML = 'Ver resultados';
       getPlayerAnswersFromLocalStorage()
-      /*código para cambiar a la siguiente pantalla*/
-    }
-  } 
-}
-
-//Asigna el evento handleSelectAnswer a los elementos del array
-const setHandleSelectAnswerTargets = (targetElements) => {
-  targetElements.forEach(element => {
-    element.addEventListener('click', handleSelectAnswer)
-})};
+      addClass(document.querySelector('.nextElementBtn'), 'navigateToResultsBtn')
+    };
+  }; 
+};
 
 //Función manejadora del evento click en label y radio button
 function handleSelectAnswer(e) {
@@ -176,34 +150,35 @@ function handleSelectAnswer(e) {
   //Asignación del evento a los label y radio buttons
   const labels = document.querySelectorAll('.formLabel');
   const radioButtons = document.querySelectorAll('.radio');
-  setHandleSelectAnswerTargets([...labels, ...radioButtons])
+  setEventListenerOfClickEvent([...labels, ...radioButtons], handleSelectAnswer);
 
   if (!playerAnswer) {
     const checkedRadioButton = document.querySelector('.radio:checked');
 
     if (checkedRadioButton) {
       playerAnswer = checkedRadioButton.value;
-    }
-  }
+    };
+  };
   localStorage.setItem(`question${questionIndex}`, JSON.stringify(playerAnswer));
-}
+};
 
-//Toma del localStorage las respuestas seleccionadas por los jugadores
+//---> Toma del localStorage las respuestas seleccionadas por los jugadores
 function getPlayerAnswersFromLocalStorage() {
 
   for (let index=0; index<respApi.results.length; index++) {
     selectedAnswers.push(JSON.parse(localStorage.getItem(`question${index}`)));
-  }
+  };
   return selectedAnswers
-}
+};
 
-//obtiene las respuestas correctas y retorna un array
+//---> obtiene las respuestas correctas y retorna un array
 const getAllCorrectAnswer = () => {
   for (let i=0; i<respApi.results.length; i++) {
     allCorrectAnswers.push(respApi.results[i].correct_answer);
   }
   return allCorrectAnswers;
-}
+};
+
 
 //Función para mostrar un elemento escondido
 const showElement = (elementToShow) => {
