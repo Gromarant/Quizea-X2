@@ -10,37 +10,58 @@
 <body>
     <header>
       <nav>
-        <img class="avatar" src="./assets/images/defaultAvatar.jpg" alt="contactAvatar">
+        <img class="avatar" src="/assets/images/defaultAvatar.jpg" alt="contactAvatar">
         <span class="iconify menu" data-icon="ic:round-menu"></span>
       </nav>
     </header>
     <main>
-      <form id="question" class="flexColumnCenter"></form>
-      
-      <!-- <section id="results" class="hidden">
-        <article class="scoreSection">
-          <div class="flexRowCenter">
-            <p class="breadcrumbAnswer correct">7</p>
-            <p class="totalQuestions">10</p>
-            <p class="breadcrumbAnswer incorrect">3</p>
-          </div>
-          <p>Score</p>
-          <p class="totalScore">7/3</p>
+      <form id="formRegistration">
+        <article class="cardWelcome">
+          <p class="welcome"></p>
         </article>
-        <img class="graphic" src="/assets/images/grafica.svg">
-      </section>
-    </main> -->
+        <label for="googleBtn">
+          <span class="iconify" data-icon="flat-color-icons:google"></span>
+          <input type="button" name="googleBtn" id="googleBtn">
+        </label>
+        <label for="email">
+          <span class="iconify" data-icon="material-symbols:mail"></span>
+          <input  name="contactEmail" id="email" placeholder="Email" required>
+        </label>
+        <label for="password">
+          <span class="iconify" data-icon="mdi:password"></span>
+          <input type="password" name="password" id="password" placeholder="Password" required>
+        </label>
+          <button class="btn SubmitBtn" type="submit">Login</button>
+      </form>
+      <article id="home">
+        <p class="breadcrumbAnswer correct">Texto de bienvenida al jugador en la home page</p>
+        <input type="text" name="nickName" id="nickName" placeholder="NickName">
+        <button class="btn fillstyleBtn navigateToQuizBtn">Empezar</button>
+      </article>
 
+      <form id="quiz" class="flexColumnCenter"></form>
+      
+      <section id="results">
+        <article class="scoreSection">
+          <!-- <img id="score hidden" src="/assets/images/scoreHeader.svg" alt="player score"> -->
+          <p class="dataTime"></p>
+        </article>
+        <!-- Aquí la gráfica -->
+      </section>
+
+      <section id="review"></section>
+    </main>
     <footer class="flexRowCenter">
-      <button class="btn outlineBtn nextElementBtn" id="next">Siguiente</button>
-      <!-- <section class="resultMenu spaceAround hidden">
-        <span class="iconify" data-icon="ion:home"></span>
-        <span class="iconify" data-icon="ion:reload-circle"></span>
-        <span class="iconify" data-icon="carbon:view-filled"></span>
-      </section> -->
+      <button id="footerActionBtn" class="btn outlineBtn">Volver</button>
+      <section class="resultMenu spaceAround hidden">
+        <span class="iconify navigateHomeBtn" data-icon="ion:home"></span>
+        <span class="iconify navigateToQuizBtn" data-icon="ion:reload-circle"></span>
+        <span class="iconify navigateReviewBtn" data-icon="carbon:view-filled"></span>
+      </section>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="/scripts/script.js"></script>
+    <script src="/scripts/database.js"></script>
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 </body>
 </html>
