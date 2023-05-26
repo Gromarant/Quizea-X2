@@ -10,12 +10,18 @@
 <body>
     <header>
       <nav>
-        <img class="avatar" src="/assets/images/avatars/defaultAvatar.jpg" alt="contactAvatar">
-        <span class="iconify menu" data-icon="ic:round-menu"></span>
+        <img id="avatar" class="avatar" src="assets/images/avatars/defaultAvatar.jpg" alt="contactAvatar">
+        <div id="headerMenu"><span class="iconify menu" data-icon="ic:round-menu"></span></div>
+        <ul class="navHamburgerMenu">
+          <a href="#home"><li class="">Home</li></a> <!-- agregarle color de selected<---> 
+          <a href="#quiz"><li class="navigateToQuizBtn">Play Quiz</li></a>
+          <a href="#Results"><li class="navigateToResultsBtn">Results</li></a>
+          <li class="logOut">Log out</li>
+        </ul>
       </nav>
     </header>
     <main>
-      <form id="formRegistration">
+      <form id="registration">
         <article class="cardWelcome">
           <p class="welcome"></p>
         </article>
@@ -25,39 +31,55 @@
         </label>
         <label for="email">
           <span class="iconify" data-icon="material-symbols:mail"></span>
-          <input  name="contactEmail" id="email" placeholder="Email" required>
+          <input  name="contactEmail" id="email" placeholder="Email" >
         </label>
         <label for="password">
           <span class="iconify" data-icon="mdi:password"></span>
-          <input type="password" name="password" id="password" placeholder="Password" required>
+          <input type="password" name="password" id="password" placeholder="Password">
         </label>
-          <button class="btn SubmitBtn" type="submit">Login</button>
+          <button id="signUp" class="btn SubmitBtn navigateToHomeBtn" type="submit">Sign up</button>
       </form>
+
       <article id="home">
         <p class="breadcrumbAnswer correct">Texto de bienvenida al jugador en la home page</p>
         <input type="text" name="nickName" id="nickName" placeholder="NickName">
-        <button class="btn fillstyleBtn navigateToQuizBtn">Empezar</button>
+        <button class="btn fillstyleBtn saveNicknameBtn">Save</button>
       </article>
 
       <form id="quiz" class="flexColumnCenter"></form>
       
       <section id="results">
+        <img class="scoreCard" src="/assets/images/scoreCards/0810.svg">
         <article class="scoreSection">
-          <!-- <img id="score hidden" src="/assets/images/scoreHeader.svg" alt="player score"> -->
           <p class="dataTime"></p>
         </article>
-        <!-- Aquí la gráfica -->
+        <h2 class="graphicTitle">Graphic of your games history</h2>
+        <img src="assets/images/grafica.svg" alt="Graphic of games history">
       </section>
 
       <section id="review"></section>
     </main>
     <footer class="flexRowCenter">
-      <button id="footerActionBtn" class="btn outlineBtn">Volver</button>
-      <section class="resultMenu spaceAround hidden">
-        <span class="iconify navigateHomeBtn" data-icon="ion:home"></span>
-        <span class="iconify navigateToQuizBtn" data-icon="ion:reload-circle"></span>
-        <span class="iconify navigateReviewBtn" data-icon="carbon:view-filled"></span>
-      </section>
+      <button id="logIn" class="btn outlineBtn">Log in</button>
+      <button id="play" class="btn outlineBtn">Play</button>
+      <button id="next" class="btn outlineBtn">Next</button>
+      <button id="seeResults" class="btn outlineBtn">See Results</button>
+      <nav id="footerMenu" class="resultMenu spaceAround hidden">
+        <ul class="resultMenu">
+          <li id="navigateHomeBtn">
+            <span class="iconify" data-icon="ion:home"></span>
+            <p>Home</p>
+          </li>
+          <li id="navigateToQuizBtn">
+            <span class="iconify" data-icon="ion:reload-circle"></span>
+            <p>Play</p>
+          </li>
+          <li id="navigateReviewBtn">
+            <span class="iconify" data-icon="carbon:view-filled"></span>
+            <p>Results</p>
+          </li>
+        </ul>
+      </nav>
     </footer>
 
     <script src="/scripts/script.js"></script>
