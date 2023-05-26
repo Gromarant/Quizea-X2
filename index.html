@@ -4,13 +4,64 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <title>Quizea-X2</title>
 </head>
 <body>
-    <header></header>
+    <header>
+      <nav>
+        <img class="avatar" src="/assets/images/avatars/defaultAvatar.jpg" alt="contactAvatar">
+        <span class="iconify menu" data-icon="ic:round-menu"></span>
+      </nav>
+    </header>
     <main>
-        <form id="preguntas"></form>
+      <form id="formRegistration">
+        <article class="cardWelcome">
+          <p class="welcome"></p>
+        </article>
+        <label for="googleBtn">
+          <span class="iconify" data-icon="flat-color-icons:google"></span>
+          <input type="button" name="googleBtn" id="googleBtn">
+        </label>
+        <label for="email">
+          <span class="iconify" data-icon="material-symbols:mail"></span>
+          <input  name="contactEmail" id="email" placeholder="Email" required>
+        </label>
+        <label for="password">
+          <span class="iconify" data-icon="mdi:password"></span>
+          <input type="password" name="password" id="password" placeholder="Password" required>
+        </label>
+          <button class="btn SubmitBtn" type="submit">Login</button>
+      </form>
+      <article id="home">
+        <p class="breadcrumbAnswer correct">Texto de bienvenida al jugador en la home page</p>
+        <input type="text" name="nickName" id="nickName" placeholder="NickName">
+        <button class="btn fillstyleBtn navigateToQuizBtn">Empezar</button>
+      </article>
+
+      <form id="quiz" class="flexColumnCenter"></form>
+      
+      <section id="results">
+        <article class="scoreSection">
+          <!-- <img id="score hidden" src="/assets/images/scoreHeader.svg" alt="player score"> -->
+          <p class="dataTime"></p>
+        </article>
+        <!-- Aquí la gráfica -->
+      </section>
+
+      <section id="review"></section>
     </main>
-    <footer></footer>
+    <footer class="flexRowCenter">
+      <button id="footerActionBtn" class="btn outlineBtn">Volver</button>
+      <section class="resultMenu spaceAround hidden">
+        <span class="iconify navigateHomeBtn" data-icon="ion:home"></span>
+        <span class="iconify navigateToQuizBtn" data-icon="ion:reload-circle"></span>
+        <span class="iconify navigateReviewBtn" data-icon="carbon:view-filled"></span>
+      </section>
+    </footer>
+
+    <script src="/scripts/script.js"></script>
+    <script src="/scripts/database.js"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 </body>
 </html>
