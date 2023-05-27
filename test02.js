@@ -57,3 +57,10 @@ let data = [];//las 3 variables siguientes hacen referencia a elementos del html
       article.appendChild(p3);
     });
   }
+
+  //Boceto de la variable getScoreSvg para pintar con el svg que corresponda en cada caso
+
+  let comparedAnswersTrue = comparedAnswers.filter(Boolean).length;
+comparedAnswersTrue = comparedAnswersTrue.toString();
+
+let getScoreSvg = comparedAnswersTrue.toString() + data.results.length.toString();
