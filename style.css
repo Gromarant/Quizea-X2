@@ -4,9 +4,13 @@
   padding: 0;
   font-size: 62.5%;
 }
-
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 html {
-  background-color: #000000;
+  background-color: #FFFFFF;
 }
 header {
   background-color: #A42FC1;
@@ -21,16 +25,24 @@ nav {
   position: sticky;
   top: 0;
 }
+main {
+  text-align: center;
+  font-size: 10rem;
+}
 article {
-   color: #FFFFFF;
+  text-align: center;
+  color: #000000;
 }
 footer {
-  position: sticky;
+  background-color: #ffffff;
+  position: fixed;
   bottom: 0;
   min-height: 7.8rem;
-  background-color: #000000;
+  width: 100%;
 }
-
+input {
+  width: 100%;
+}
 
 .flexColumnCenter {
   display: flex;
@@ -49,7 +61,7 @@ footer {
   border-radius: 50%;
 }
 .iconify {
-  font-size: 4.8rem;
+  font-size: 3.6rem;
 }
 .menu {
   color: #bbb;
@@ -61,18 +73,68 @@ footer {
 .outlineBtn {
   font-size: 1.9rem;
   font-weight: 500;
-  color: #FFFFFF;
-  background-color: #000000;
+  color: #000000;
+  background-color: #FFFFFF;
   border: solid 0.2rem #A42FC1;
   border-radius: 1.4rem;
 }
-
-
-#question {
-  gap: 6rem;
-  color: #FFFFFF;
-  font-size: 2.4rem;
+.breadcrumbs {
+  font-size: 4rem
 }
-#question > article {
+.formLabel {
   font-size: 3.2rem;
+}
+.resultMenu {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  font-size: 3.2rem;
+  width: 100%;
+  list-style: none;
+}
+.scoreCard {
+  width: 80%;
+}
+.displayedHamburgerMenu > a {
+  font-size: 3.2rem;
+}
+.displayedHamburgerMenu > li {
+  list-style: none;
+  font-size: 2rem;
+}
+.hidden {
+  display: none;
+}
+
+
+.resultMenu > li {
+  padding: 2rem 3rem;
+}
+
+
+#headerMenu {
+  padding: 2rem 3rem;
+}
+#question {
+  font-size: 5rem;
+}
+#quiz {
+  gap: 6rem;
+  color: #000000;
+  font-size: 2.4rem;
+  margin: 10% 0;
+}
+#quiz > article {
+  font-size: 3.2rem;
+}
+#quiz > label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 2.2rem;
+  min-height: 4.8rem;
+  width: 60%;
+}
+#review {
+  font-size: 10rem;
 }
