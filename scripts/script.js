@@ -228,6 +228,7 @@ function setGamesHistoryDataStructure() {
 
 
 //---> Asigna el evento click a una colección
+//---> Asigna el evento click a una colección
 const setEventListenerOfClickEvent = (targetElementsArr, handlerFunction) => {
   targetElementsArr.forEach(element => {
     element.addEventListener('click', handlerFunction);
@@ -235,71 +236,86 @@ const setEventListenerOfClickEvent = (targetElementsArr, handlerFunction) => {
 
 //mostrar o escoder un elemento
 const showElement = (elementToShow) => elementToShow.classList.remove('hidden');
+const showElements = (elementsToShow) => elementsToShow.forEach(element => showElement(element));
+
 const hideElement = (elementToHide) => elementToHide.classList.add('hidden');
+const hideElements = (elementsToHide) => elementsToHide.forEach(element => hideElement(element));
 
 //Quitar o agregar una clase a un elemento
 const removeClass = (elementWhereRemove, elementClass) => elementWhereRemove.classList.remove(elementClass);
 const addClass = (elementWhereAdd, newClass) => elementWhereAdd.classList.add(newClass);
 
-
-//obtiene la referencia a los botones que despliegan una sección
-const getDisplayBtn = (buttonsCollection, classNameOfBtn) => buttonsCollection.push( document.querySelectorAll(classNameOfBtn) );
+//get collections of elements
+const getElement = (selector) => document.querySelector(selector);
+const getElements = (selectorArr) => selectorArr.map(selector => getElement(selector));
 
 //Despliegado de las secciones de la app
+function navigateToRegistration() {
+  let elementsToHide = getElements(['#avatar', '#headerMenu', '#home', '#results', '#play', '#next', '#seeResults']);
+  hideElements(elementsToHide);
+
+  getElement('#signUp').addEventListener('click', navigateToHome);
+  getElement('#logIn').addEventListener('click', navigateToHome);
+}
+navigateToRegistration() //inicialización del juego
+
+
 function navigateToHome() {
-  hideElement( document.querySelector('.nextElementBtn') );
-  hideElement( document.querySelector('#score') );
-  displaySection(gameSections.home);
-  setEventListenerOfClickEvent(document.querySelectorAll('.navigateToQuizBtn'), navigateToQuiz);
+  let elementsToHide = getElements(['#registration', '#quiz', '#results', '#review', '#logIn', '#next', '#seeResults', '#footerMenu','.navHamburgerMenu']);
+  let elementsToShow = getElements(['#avatar', '#headerMenu', '#home', '#play']);
+  hideElements(elementsToHide);
+  showElements(elementsToShow);
+  
+  getElement('#logIn').innerHTML = 'Play';
+  getElement('.saveNicknameBtn').addEventListener('click', () => console.log('nickName:', document.querySelector('#nickName').value));
+  getElement('#play').addEventListener('click', navigateToQuiz);
 }
 
 function navigateToQuiz() {
-  document.querySelector('#footerActionBtn').innerHTML = 'Siguiente';
-  showElement( document.querySelector('#footerActionBtn') );
-  // setEventListenerOfClickEvent(document.querySelectorAll('.formLabel'), handleSelectAnswer);
-  displaySection(gameSections.quiz);
-  printQuestion(respApi.results[questionIndex]);
+  let elementsToHide = getElements(['#registration', '#home' , '#results', '#review', '#logIn', '#play', '#seeResults', '#footerMenu']);
+  let elementsToShow = getElements(['#avatar', '#headerMenu', '#quiz', '#next']);
+  hideElements(elementsToHide);
+  showElements(elementsToShow);
+
+  printQuestion(data.results[0]);
+  getElement('#next').addEventListener('click', printNextQuestion);
 };
 
 function navigateToResults() {
-  hideElement( document.querySelector('#footerActionBtn') );
-  showElement( document.querySelector('.resultMenu') );
-  displaySection(gameSections.results);
-  storeDateTime();
-  setComparedAnswers();
-  setGamesHistoryDataStructure(); //se muestra la estructura de datos
+  questionIndex = 0;
+  currentQuestionNumber = 1;
+  let elementsToHide = getElements(['#registration', '#home', '#quiz', '#review', '#logIn', '#play', '#next', '#seeResults']);
+  let elementsToShow = getElements(['#avatar', '#headerMenu', '#footerMenu', '#results']);
+  hideElements(elementsToHide);
+  showElements(elementsToShow);
+
+  setGameTime();
+  getComparedAnswers();
+  setGamesHistoryDataStructure();
+  cleanLocalStorage();
+  getElement('#navigateHomeBtn').addEventListener('click', navigateToHome);
+  getElement('#navigateToQuizBtn').addEventListener('click', navigateToQuiz);
+  getElement('#navigateReviewBtn').addEventListener('click', navigateToReview);
 };
 
-function navigateReview() { //Agregar respuestas
-  hideElement( document.querySelector('#footerActionBtn') );
-  showElement( document.querySelector('.resultMenu') );
+// function setReviewStyles() {
+//   if (historyData.games.isSelectedTheCorrectAnswer) {
 
-  displaySection(gameSections.review);
+//   }
+// };
+
+function navigateToReview() { 
+  let elementsToHide = getElements(['#registration', '#home', '#quiz', '#results', '#logIn', '#play', '#next', '#seeResults']);
+  let elementsToShow = getElements(['#avatar', '#headerMenu', '#footerMenu', '#review']);
+  hideElements(elementsToHide);
+  showElements(elementsToShow);
+
+  let [collection] = gamesHistoryData;
+  while (collection.games.collectionquestions.length < data.results.length) {
+    printReview(gamesHistoryData);
+  }
 };
 
-
-//Obtiene fecha y hora de la partida
-function storeDateTime() {
-  let now = new Date();
-  let date = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
-  let hour = `${now.getHours()}:${now.getMinutes()}`;
-
-  dataTime.push(date, hour);
-}
-
-
-//Compara las respuestas correctas de cada pregunta con las respuestas
-function setComparedAnswers() {
-
-  for (let i = 0; i < allCorrectAnswers.length; i++) {
-    comparedAnswers.push(allCorrectAnswers[i] === selectedAnswers[i]);
-  };
-};
 
 //Eventos
-//---> nextElementBtn agregar esta clase al pasar al quiz
-document.querySelector('.navigateToQuizBtn').addEventListener('click', navigateToQuiz)
-// setEventListenerOfClickEvent(document.querySelectorAll('.navigateToResultsBtn', navigateToResults));
-// setEventListenerOfClickEvent(document.querySelectorAll('.navigateReviewBtn', navigateReview));
-// document.querySelector('#footerActionBtn').addEventListener('click', printNextQuestion);
-// document.querySelector('#quiz').addEventListener('click', handleSelectAnswer);
+const handleHamburguerMenu = () => document.querySelector('.navHamburgerMenu').classList.toggle('hidden');
