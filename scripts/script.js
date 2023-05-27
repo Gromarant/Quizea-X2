@@ -310,15 +310,8 @@ function navigateToResults() {
   cleanLocalStorage();
   getElement('#navigateHomeBtn').addEventListener('click', navigateToHome);
   getElement('#navigateToQuizBtn').addEventListener('click', navigateToQuiz);
-
   getElement('#navigateReviewBtn').addEventListener('click', navigateToReview);
 };
-
-// // function setReviewStyles() {
-// //   if (historyData.games.isSelectedTheCorrectAnswer) {
-
-// //   }
-// // };
 
 function navigateToReview() { 
   let elementsToHide = getElements(['#registration', '#home', '#quiz', '#results', '#logIn', '#play', '#next', '#seeResults']);
@@ -332,6 +325,7 @@ function navigateToReview() {
 };
 
 const handleHamburguerMenu = () => getElement('.navHamburgerMenu').classList.toggle('hidden');
+
 
 //Eventos
 getElement('#avatar').addEventListener('click', navigateToHome);

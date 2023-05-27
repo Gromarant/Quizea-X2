@@ -1,56 +1,81 @@
-//Agregar mensaje de error (add error message)
-const setErrorMessage = (errorMessage) =>
-Swal.fire({
-  icon: 'error',
-  title: 'Error',
-  text: errorMessage,
-  footer: '<a href="">Why do I have this issue?</a>'
-})
+//firebase config
+//-----> HERE
 
-//validations patterns
-const nameValidation = /^[a-zA-Z]{2,20}$/;
-const emailValidation = /^\w+([*@\/hotmail\/gmail([\.-]?\w+)*(\.\w{2,4})$/;
+//Inicialización de Firebase
+firebase.initializeApp(firebaseConfig);
 
-//Validation Functions
-const checkEmail = (contactEmail) => emailValidation.test(contactEmail);
-const checkPassword = (contactName) => nameValidation.test(contactName);
+const userEmail = document.querySelector('#email');
+const userPassword = document.querySelector('#password');
 
-//limpiar los valores de los inputs
-const cleanInputsValue = (e) => {
-  e.target.email.value = '';
-  e.target.password.value = '';
-}
+//Registro de usuario
+const userSignUp = async (email, password) => {
+  firebase
+    .auth()
+    .createUserWithEmailAndPassword(email, password)
+    .then(userCredential => {
+      let user = userCredential.user;
+      alert(`Your user has been registered ${user.email} ID:${user.uid}`)
+      
+      createUser({
+        id: user.uid,
+        email: user.email,
+      });
+    })
+    .catch((error) => {
+      let errorCode = error.code;
+      let errorMessage = error.message;
+      console.log("System error:" +  errorCode + ' ' + errorMessage);
+    });
+};
+// email test: mafer@gmail.com AMZn+humTdumt$@t0nAwa11
+// email test: miguel@gmail.com  9zg9D4XwzQXbFDZK7
+// email test: vicky@gmail.com  AMZn+humTdumt$@t0nAwa11
 
 //Obtener datos de contacto (get contact data)
-const handleSubmit = (e) => {
+document.querySelector('#registration').addEventListener('submit', (e) => {
   e.preventDefault();
-  let email = e.target.email.value;
-  let password = e.target.password.value;
-  
-  //Validación del formulario (validation form)
-  let errorMessage = '';
-  let validated = true;
-  
-  if(!checkPassword(password)) {
-    validated = false;
-    errorMessage += '* Password: Error on password';
-    cleanInputsValue(e);
-  } 
-  
-  if (!checkPassword) {
-    errorMessage  += '* Nombre: debe tener al menos 2 caracteres, no contener números, caracteres especiales o espacios y tener un máximo de 20 caracteres';
-    cleanInputsValue(e);
-  }
-  else if (!checkEmail) {
-    errorMessage += '* Email: no admite caracteres especiales';
-    cleanInputsValue(e);
-  }
+  let email = e.target.elements.email.value;
+  let password = e.target.elements.password.value;
 
-  if (validated) {
-    createContact({password, email});
-    cleanInputsValue(e);
-  } 
-  else {
-    setErrorMessage(errorMessage);
+  password ? userSignUp(email, password) : alert("error password");
+})
+
+
+//Acceso a usuario registrado con correo
+const userSignIn = async () => {
+  const signInEmail = await userEmail.value;
+  const signInPassword = await userPassword.value;
+  firebase.auth().signInWithEmailAndPassword(signInEmail, signInPassword)
+    .then(userCredential => {
+      let user = userCredential.user;
+      alert(`your have login as ${user.email} ID:${user.uid}`);
+    })
+    .catch(error => {
+      console.log("Error login:", error.message);
+    })
+};
+
+const userSignOut = async () => {
+  let user = await firebase.auth().currentUser;
+
+  firebase.auth().signOut().then(() => {
+    console.log("GoodBye: " + user.email)
+  }).catch((error) => {
+    console.log("Error with log out: " + error);
+  });
+};
+
+//User status
+firebase.auth().onAuthStateChanged(function (user) {
+  if (user) {
+    navigateToHome();
+    console.log(`Log user: ${user.email} ${user.uid}`);
+  } else {
+    console.log("There is no user!");
   }
-}
+});
+
+//Events
+document.querySelector('#logIn').addEventListener('click', userSignIn);
+document.querySelector('#signUp').addEventListener('click', userSignUp);
+document.querySelector('#logOut').addEventListener('click', userSignOut);
