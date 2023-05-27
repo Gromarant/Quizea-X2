@@ -263,7 +263,7 @@ const getElements = (selectorArr) => selectorArr.map(selector => getElement(sele
 
 //Despliegado de las secciones de la app
 function navigateToRegistration() {
-  let elementsToHide = getElements(['#avatar', '#headerMenu', '#home', '#results', '#play', '#next', '#seeResults']);
+  let elementsToHide = getElements(['#avatar', '#headerMenu', '#home', '#results', '#play', '#next', '#seeResults', '.navHamburgerMenu']);
   hideElements(elementsToHide);
 
   getElement('#signUp').addEventListener('click', navigateToHome);
@@ -279,7 +279,10 @@ function navigateToHome() {
   showElements(elementsToShow);
   
   getElement('#logIn').innerHTML = 'Play';
-  getElement('.saveNicknameBtn').addEventListener('click', () => console.log('nickName:', document.querySelector('#nickName').value));
+  getElement('.saveNicknameBtn').addEventListener('click', () => {
+    console.log('nickName:', getElement('#nickName').value);
+    getElement('#nickName').value = '';
+  });
   getElement('#play').addEventListener('click', navigateToQuiz);
 }
 
@@ -328,6 +331,12 @@ function navigateToReview() {
   };
 };
 
-const handleHamburguerMenu = () => document.querySelector('.navHamburgerMenu').classList.toggle('hidden');
+const handleHamburguerMenu = () => getElement('.navHamburgerMenu').classList.toggle('hidden');
 
 //Eventos
+getElement('#avatar').addEventListener('click', navigateToHome);
+getElement('.navigateToHomeBtn').addEventListener('click', navigateToHome);
+getElement('.navigateToQuizBtn').addEventListener('click', navigateToQuiz);
+getElement('.navigateToResultsBtn').addEventListener('click', navigateToResults);
+getElement('.navigateToReviewBtn').addEventListener('click', navigateToReview);
+getElement('#headerMenu').addEventListener('click', handleHamburguerMenu);
