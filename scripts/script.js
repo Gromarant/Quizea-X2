@@ -70,9 +70,16 @@ function shuffled(elements) {
 /*---> Une en un array las respuestas de una pregunta */
 function getAnswersOneQuestion(question) {
   let allquestionAnswers;
-
   if (questionIndex < data.results.length) {
     allquestionAnswers = [question.correct_answer, ...question.incorrect_answers];
+  }
+  return allquestionAnswers;
+}
+
+function getAnswersReview(data) {
+  let allquestionAnswers;
+  if (allquestionAnswers.length < data.length) {
+    allquestionAnswers = [question.correct_answer, ...questions.incorrect_answers];
   }
   return allquestionAnswers;
 }
@@ -82,22 +89,24 @@ function printQuestion(object) {
   let answers = shuffled( getAnswersOneQuestion(object) );
 
   getElement('#quiz').innerHTML =
-  `<article>
-    <p class="breadcrumbs">Question ${currentQuestionNumber}/${data.results.length}</p>
-    <p id="question">${object.question}</p>
-  </article>
-  <label class="formLabel" for="answer1">${answers[0]}
-    <input type="radio" class="radio" name="answer" id="answer1" value="${answers[0]}">
-  </label>
-  <label class="formLabel" for="answer2">${answers[1]}
-    <input type="radio" class="radio" name="answer" id="answer2" value="${answers[1]}">
-  </label>
-  <label class="formLabel" for="answer3">${answers[2]}
-    <input type="radio" class="radio" name="answer" id="answer3" value="${answers[2]}">
-  </label>
-  <label class="formLabel" for="answer4">${answers[3]}
-    <input type="radio" class="radio" name="answer" id="answer4" value="${answers[3]}">
-  </label>`
+  `<section>
+     <article>
+       <p class="breadcrumbs">Question ${currentQuestionNumber}/${data.results.length}</p>
+       <p id="question">${object.question}</p>
+     </article>
+     <label class="formLabel" for="answer1">${answers[0]}
+       <input type="radio" class="radio" name="answer" id="answer1" value="${answers[0]}">
+     </label>
+     <label class="formLabel" for="answer2">${answers[1]}
+       <input type="radio" class="radio" name="answer" id="answer2" value="${answers[1]}">
+     </label>
+     <label class="formLabel" for="answer3">${answers[2]}
+       <input type="radio" class="radio" name="answer" id="answer3" value="${answers[2]}">
+     </label>
+     <label class="formLabel" for="answer4">${answers[3]}
+       <input type="radio" class="radio" name="answer" id="answer4" value="${answers[3]}">
+     </label>
+  </section>`
 
    //Asignación del evento a los label y radio buttons
    const labels = document.querySelectorAll('.formLabel');
@@ -105,32 +114,33 @@ function printQuestion(object) {
    setEventListenerOfClickEvent([...labels, ...radioButtons], handleSelectAnswer);
 };
 
-//Pinta en el DOM las preguntas 
+// //Pinta en el DOM las preguntas 
 function printReview(object) {
-  let [ gamesPlayed ] = object;
-  let objectQuestion = gamesPlayed.games.collectionquestions
-  let answers = getAnswersOneQuestion(objectQuestion);
+  let gameData = [...object].map(gamePlayed => gamePlayed["games"].questions);
+  let answers = getAnswersReview(gameData);
 
-  getElement('#review').innerHTML =
-  `<article>
-    <p class="breadcrumbs">Question ${currentQuestionNumber}/${data.results.length}</p>
-    <p id="question">${objectQuestion.question}</p>
-  </article>
-  <label class="formLabel" for="answer1">${answers[0]}
-    <input type="radio" class="radio" name="answer" id="answer1" value="${answers[0]}">
-  </label>
-  <label class="formLabel" for="answer2">${answers[1]}
-    <input type="radio" class="radio" name="answer" id="answer2" value="${answers[1]}">
-  </label>
-  <label class="formLabel" for="answer3">${answers[2]}
-    <input type="radio" class="radio" name="answer" id="answer3" value="${answers[2]}">
-  </label>
-  <label class="formLabel" for="answer4">${answers[3]}
-    <input type="radio" class="radio" name="answer" id="answer4" value="${answers[3]}">
-  </label>`
+  getElement('#review').innerHTML +=
+  `<section>
+     <article>
+     <p class="breadcrumbs">Question ${currentQuestionNumber}/${objectQuestion.length}</p>
+     <p id="questionRev">${gameData.questions.question}</p>
+     </article>
+     <label class="formLabel" for="answer1">${answers[0]}
+       <input type="radio" class="radio" name="answer" id="answer1" value="${answers[0]}">
+     </label>
+     <label class="formLabel" for="answer2">${answers[1]}
+       <input type="radio" class="radio" name="answer" id="answer2" value="${answers[1]}">
+     </label>
+     <label class="formLabel" for="answer3">${answers[2]}
+       <input type="radio" class="radio" name="answer" id="answer3" value="${answers[2]}">
+     </label>
+     <label class="formLabel" for="answer4">${answers[3]}
+       <input type="radio" class="radio" name="answer" id="answer4" value="${answers[3]}">
+     </label>
+  </section>`
 };
 
-//Pinta en el DOM las preguntas y respuestas una a una
+// //Pinta en el DOM las preguntas y respuestas una a una
 const printNextQuestion = () => {
 
   if (questionIndex < data.results.length) {
@@ -170,7 +180,7 @@ function getPlayerAnswersFromLocalStorage() {
   for (let index=0; index<data.results.length; index++) {
     selectedAnswers.push(JSON.parse(localStorage.getItem(`question${index}`)));
   };
-  return selectedAnswers
+  return selectedAnswers;
 };
 
 //Compara las respuestas correctas de cada pregunta con las respuestas
@@ -205,29 +215,31 @@ function setGameTime() {
 function setGamesHistoryDataStructure() {
   let time = storeDateTime();
   let comparedAnswers = getComparedAnswers();
-  let questions = data.results[questionIndex];
+  
+  for (let index=0; index<data.results.length; index++) {
+    let question = data.results[index];
 
-  let gamesPlayed = {
-    playerId,
-    nickName,
-    games: [
-      {
-        gameDate: time.date,
-        gameHour: time.hour,
-        isSelectedTheCorrectAnswer: comparedAnswers[questionIndex],  /*-->Variable de si contestó correctamente*/
-        collectionquestions: [
-          questions
-        ],
-      },
-    ],
+    let gamesPlayed = {
+      playerId,
+      nickName,
+      games: [
+        {
+          gameDate: time.date,
+          gameHour: time.hour,
+          isSelectedTheCorrectAnswer: comparedAnswers[index],  /*-->Variable de si contestó correctamente*/
+          questions: [
+            question
+          ],
+        },
+      ],
+    }
+    gamesPlayed.games.isSelectedTheCorrectAnswer = comparedAnswers[questionIndex];
+    gamesPlayed.games.questions = question;
+    gamesHistoryData.push(gamesPlayed);
   }
-  gamesPlayed.games.isSelectedTheCorrectAnswer = comparedAnswers[questionIndex];
-  gamesPlayed.games.collectionquestions = questions;
-  gamesHistoryData.push(gamesPlayed);
 }
 
 
-//---> Asigna el evento click a una colección
 //---> Asigna el evento click a una colección
 const setEventListenerOfClickEvent = (targetElementsArr, handlerFunction) => {
   targetElementsArr.forEach(element => {
@@ -295,14 +307,15 @@ function navigateToResults() {
   cleanLocalStorage();
   getElement('#navigateHomeBtn').addEventListener('click', navigateToHome);
   getElement('#navigateToQuizBtn').addEventListener('click', navigateToQuiz);
+
   getElement('#navigateReviewBtn').addEventListener('click', navigateToReview);
 };
 
-// function setReviewStyles() {
-//   if (historyData.games.isSelectedTheCorrectAnswer) {
+// // function setReviewStyles() {
+// //   if (historyData.games.isSelectedTheCorrectAnswer) {
 
-//   }
-// };
+// //   }
+// // };
 
 function navigateToReview() { 
   let elementsToHide = getElements(['#registration', '#home', '#quiz', '#results', '#logIn', '#play', '#next', '#seeResults']);
@@ -310,12 +323,11 @@ function navigateToReview() {
   hideElements(elementsToHide);
   showElements(elementsToShow);
 
-  let [collection] = gamesHistoryData;
-  while (collection.games.collectionquestions.length < data.results.length) {
+  for (let i=0; i<gamesHistoryData.length; i++) {
     printReview(gamesHistoryData);
-  }
+  };
 };
 
+const handleHamburguerMenu = () => document.querySelector('.navHamburgerMenu').classList.toggle('hidden');
 
 //Eventos
-const handleHamburguerMenu = () => document.querySelector('.navHamburgerMenu').classList.toggle('hidden');
