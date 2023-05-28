@@ -206,7 +206,7 @@ function setUsersCollectionStructure() {
   user.gameNumber = gameNumber;
   user.gameDate = time.date;
   user.gameHour = time.hour;
-  user.push(gamesPlayed);
+  users.push(gamesPlayed);
 }
 
 
@@ -233,7 +233,7 @@ const getElements = (selectorArr) => selectorArr.map(selector => getElement(sele
 
 //Despliegado de las secciones de la app
 function navigateToRegistration() {
-  let elementsToHide = getElements(['#avatar', '#headerMenu', '#home', '#results', '#play', '#next', '#seeResults', '.navHamburgerMenu']);
+  let elementsToHide = getElements(['#avatarUser', '#headerMenu', '#home', '#results', '#play', '#next', '#seeResults', '.navHamburgerMenu']);
   hideElements(elementsToHide);
 }
 navigateToRegistration() //inicialización del juego
@@ -241,7 +241,7 @@ navigateToRegistration() //inicialización del juego
 
 function navigateToHome() {
   let elementsToHide = getElements(['#registration', '#quiz', '#results', '#review', '#logIn', '#next', '#seeResults', '#footerMenu','.navHamburgerMenu']);
-  let elementsToShow = getElements(['#avatar', '#headerMenu', '#home', '#play']);
+  let elementsToShow = getElements(['#avatarUser', '#headerMenu', '#home', '#play']);
   hideElements(elementsToHide);
   showElements(elementsToShow);
   
@@ -255,7 +255,7 @@ function navigateToHome() {
 
 function navigateToQuiz() {
   let elementsToHide = getElements(['#registration', '#home' , '#results', '#review', '#logIn', '#play', '#seeResults', '#footerMenu']);
-  let elementsToShow = getElements(['#avatar', '#headerMenu', '#quiz', '#next']);
+  let elementsToShow = getElements(['#avatarUser', '#headerMenu', '#quiz', '#next']);
   hideElements(elementsToHide);
   showElements(elementsToShow);
 
@@ -267,7 +267,7 @@ function navigateToResults() {
   questionIndex = 0;
   currentQuestionNumber = 1;
   let elementsToHide = getElements(['#registration', '#home', '#quiz', '#review', '#logIn', '#play', '#next', '#seeResults']);
-  let elementsToShow = getElements(['#avatar', '#headerMenu', '#footerMenu', '#results']);
+  let elementsToShow = getElements(['#avatarUser', '#headerMenu', '#footerMenu', '#results']);
   hideElements(elementsToHide);
   showElements(elementsToShow);
 
@@ -282,7 +282,7 @@ function navigateToResults() {
 
 function navigateToReview() { 
   let elementsToHide = getElements(['#registration', '#home', '#quiz', '#results', '#logIn', '#play', '#next', '#seeResults']);
-  let elementsToShow = getElements(['#avatar', '#headerMenu', '#footerMenu', '#review']);
+  let elementsToShow = getElements(['#avatarUser', '#headerMenu', '#footerMenu', '#review']);
   hideElements(elementsToHide);
   showElements(elementsToShow);
 
@@ -293,171 +293,249 @@ function navigateToReview() {
 
 const handleHamburguerMenu = () => getElement('.navHamburgerMenu').classList.toggle('hidden');
 
+
+//Partimos de estos datos que son inventados
+
+let games = {
+  game01: {
+     date: "2022-05-23",
+     hour: "20:32",
+     correctAnswersCounter: 2
+   },
+   game02: {
+     date: "2022-05-24",
+     hour: "10:15",
+     correctAnswersCounter: 8
+   },
+   game03: {
+     date: "2022-05-25",
+     hour: "18:45",
+     correctAnswersCounter: 10
+   }
+ };
+
+ 
+ //Pintando la gráfica
+
+ let canvasElement = document.getElementById("scoring");
+
+ let datehour = [];
+for (let game in games) {
+  let date = games[game].date;
+  let hour = games[game].hour;
+  datehour.push(` ${date} | ${hour}.`);
+}
+datehour.reverse();
+
+let scores = [];
+for (let game in games) {
+  let score = games[game].correctAnswersCounter;
+  scores.push(score);
+}
+scores.reverse();
+
+let config = {
+  type: "bar",
+  data: {
+      labels: datehour, 
+      datasets: [{
+          label: "Y's: score; X's: day|hour", 
+          data:scores,
+          backgroundColor: [
+              "rgba(255,166,66,0.2)",//Orange
+              "rgba(255,96,136,0.2)",//Red
+              "rgba(56,166,236,0.2)",//Blue
+              "rgba(76,196,196,0.2)",//Green
+              "rgba(156,106,255,0.2)",//Purple
+          ],
+          borderColor: [
+              "rgba(255,166,66,1)",//Orange
+              "rgba(255,96,136,1)",//Red
+              "rgba(56,166,236,1)",//Blue
+              "rgba(76,196,196,1)",//Green
+              "rgba(156,106,255,1)",//Purple
+          ],
+          borderWidth:1,
+      }]
+ },
+ options: {
+  scales: {
+    yAxes: [{
+      display: true,
+      ticks: {
+          beginAtZero: true
+      }  
+    }]
+  }
+}
+};
+
+ let scoring = new Chart(canvasElement, config)
 //-------------------------------------------------------------------------------------
 //--> Carrusel <--
-class Carousel {
-  constructor(opts = {}) {
-    this.bind();
+// class Carousel {
+//   constructor(opts = {}) {
+//     this.bind();
 
-    this.opts = {
-      target: opts.target || "carousel",
-    };
+//     this.opts = {
+//       target: opts.target || "carousel",
+//     };
 
-    // Select the carousel, its items, and the control buttons
-    this.carousel = document.getElementById(this.opts.target);
-    this.items = this.carousel.getElementsByClassName("item");
-    this.prevBtn = document.getElementById("prev");
-    this.nextBtn = document.getElementById("next");
+//     // Select the carousel, its items, and the control buttons
+//     this.carousel = document.getElementById(this.opts.target);
+//     this.items = this.carousel.getElementsByClassName("item");
+//     this.prevBtn = document.getElementById("prev");
+//     this.nextBtn = document.getElementById("next");
 
-    // Prepare to limit the direction in which the carousel can slide,
-    // and to control how much the carousel slides on each interaction.
-    // To slide the carousel by a single slide, we need to know the
-    // carousel width, and the margin between each item.
-    this.carouselWidth = this.carousel.offsetWidth;
-    this.itemWidth = Math.round(
-      this.items[1].getBoundingClientRect().left -
-        this.items[0].getBoundingClientRect().left
-    );
-    this.itemMarginRight = Math.round(
-      this.items[1].getBoundingClientRect().left -
-        this.items[0].getBoundingClientRect().right
-    );
+//     // Prepare to limit the direction in which the carousel can slide,
+//     // and to control how much the carousel slides on each interaction.
+//     // To slide the carousel by a single slide, we need to know the
+//     // carousel width, and the margin between each item.
+//     this.carouselWidth = this.carousel.offsetWidth;
+//     this.itemWidth = Math.round(
+//       this.items[1].getBoundingClientRect().left -
+//         this.items[0].getBoundingClientRect().left
+//     );
+//     this.itemMarginRight = Math.round(
+//       this.items[1].getBoundingClientRect().left -
+//         this.items[0].getBoundingClientRect().right
+//     );
 
-    // Define x-axis offset properties to calculate the slide distance,
-    // and a maximum width for an upper bound.
-    // These offsets work with mouse or touch.
-    this.offset = 0;
-    this.touchOffset = 0;
-    this.maxX = -(
-      this.itemWidth * this.items.length -
-      this.itemMarginRight -
-      this.carouselWidth
-    );
+//     // Define x-axis offset properties to calculate the slide distance,
+//     // and a maximum width for an upper bound.
+//     // These offsets work with mouse or touch.
+//     this.offset = 0;
+//     this.touchOffset = 0;
+//     this.maxX = -(
+//       this.itemWidth * this.items.length -
+//       this.itemMarginRight -
+//       this.carouselWidth
+//     );
 
-    // Start/end positions calculated when a user begins dragging slides,
-    // during the drag, and at the end of dragging.
-    // The threshold represents how much a user drags before advancing
-    // the slide.
-    this.posX1 = 0;
-    this.posX2 = 0;
-    this.posInitial = this.offset;
-    this.posFinal = this.offset;
-    this.threshold = 80;
+//     // Start/end positions calculated when a user begins dragging slides,
+//     // during the drag, and at the end of dragging.
+//     // The threshold represents how much a user drags before advancing
+//     // the slide.
+//     this.posX1 = 0;
+//     this.posX2 = 0;
+//     this.posInitial = this.offset;
+//     this.posFinal = this.offset;
+//     this.threshold = 80;
 
-    // Next/prev control button click events
-    this.prevBtn.addEventListener("click", this.prev);
-    this.nextBtn.addEventListener("click", this.next);
+//     // Next/prev control button click events
+//     this.prevBtn.addEventListener("click", this.prev);
+//     this.nextBtn.addEventListener("click", this.next);
 
-    // Mouse event for dragging slides
-    this.carousel.addEventListener("mousedown", this.dragStart);
+//     // Mouse event for dragging slides
+//     this.carousel.addEventListener("mousedown", this.dragStart);
 
-    // Touch events
-    this.carousel.addEventListener("touchstart", this.dragStart);
-    this.carousel.addEventListener("touchmove", this.dragAction, {
-      passive: true,
-    });
-    this.carousel.addEventListener("touchend", this.dragEnd);
-  }
+//     // Touch events
+//     this.carousel.addEventListener("touchstart", this.dragStart);
+//     this.carousel.addEventListener("touchmove", this.dragAction, {
+//       passive: true,
+//     });
+//     this.carousel.addEventListener("touchend", this.dragEnd);
+//   }
 
-  bind() {
-    [
-      "toggleControlDisplay",
-      "prev",
-      "next",
-      "dragStart",
-      "dragAction",
-      "dragEnd",
-    ].forEach((fn) => (this[fn] = this[fn].bind(this)));
-  }
+//   bind() {
+//     [
+//       "toggleControlDisplay",
+//       "prev",
+//       "next",
+//       "dragStart",
+//       "dragAction",
+//       "dragEnd",
+//     ].forEach((fn) => (this[fn] = this[fn].bind(this)));
+//   }
 
-  toggleControlDisplay() {
-    if (this.offset === 0) {
-      this.prevBtn.style.display = "none";
-    } else if (this.offset === this.maxX) {
-      this.nextBtn.style.display = "none";
-    } else {
-      this.prevBtn.style.display = "block";
-      this.nextBtn.style.display = "block";
-    }
-  }
+//   toggleControlDisplay() {
+//     if (this.offset === 0) {
+//       this.prevBtn.style.display = "none";
+//     } else if (this.offset === this.maxX) {
+//       this.nextBtn.style.display = "none";
+//     } else {
+//       this.prevBtn.style.display = "block";
+//       this.nextBtn.style.display = "block";
+//     }
+//   }
 
-  prev() {
-    if (this.offset !== 0) {
-      this.offset += this.itemWidth;
-      this.carousel.style.transform = `translate3d(${this.offset}px, 0, 0)`;
-      this.touchOffset = this.offset;
-    }
-    this.toggleControlDisplay();
-  }
+//   prev() {
+//     if (this.offset !== 0) {
+//       this.offset += this.itemWidth;
+//       this.carousel.style.transform = `translate3d(${this.offset}px, 0, 0)`;
+//       this.touchOffset = this.offset;
+//     }
+//     this.toggleControlDisplay();
+//   }
 
-  next() {
-    if (this.offset !== this.maxX) {
-      this.offset -= this.itemWidth;
-      this.carousel.style.transform = `translate3d(${this.offset}px, 0, 0)`;
-      this.touchOffset = this.offset;
-    }
-    this.toggleControlDisplay();
-  }
+//   next() {
+//     if (this.offset !== this.maxX) {
+//       this.offset -= this.itemWidth;
+//       this.carousel.style.transform = `translate3d(${this.offset}px, 0, 0)`;
+//       this.touchOffset = this.offset;
+//     }
+//     this.toggleControlDisplay();
+//   }
 
-  dragStart(e) {
-    e = e || window.event;
-    e.preventDefault();
+//   dragStart(e) {
+//     e = e || window.event;
+//     e.preventDefault();
 
-    this.posInitial = this.offset;
+//     this.posInitial = this.offset;
 
-    if (e.type === "touchstart") {
-      this.posX1 = e.touches[0].clientX;
-    } else {
-      this.posX1 = e.clientX;
-      document.onmouseup = this.dragEnd;
-      document.onmousemove = this.dragAction;
-    }
-  }
+//     if (e.type === "touchstart") {
+//       this.posX1 = e.touches[0].clientX;
+//     } else {
+//       this.posX1 = e.clientX;
+//       document.onmouseup = this.dragEnd;
+//       document.onmousemove = this.dragAction;
+//     }
+//   }
 
-  dragAction(e) {
-    e = e || window.event;
+//   dragAction(e) {
+//     e = e || window.event;
 
-    if (e.type === "touchmove") {
-      this.posX2 = this.posX1 - e.touches[0].clientX;
-      this.posX1 = e.touches[0].clientX;
-    } else {
-      this.posX2 = this.posX1 - e.clientX;
-      this.posX1 = e.clientX;
-    }
-    if (this.touchOffset >= 0 || this.touchOffset <= this.maxX) {
-      this.touchOffset = this.offset;
-    }
+//     if (e.type === "touchmove") {
+//       this.posX2 = this.posX1 - e.touches[0].clientX;
+//       this.posX1 = e.touches[0].clientX;
+//     } else {
+//       this.posX2 = this.posX1 - e.clientX;
+//       this.posX1 = e.clientX;
+//     }
+//     if (this.touchOffset >= 0 || this.touchOffset <= this.maxX) {
+//       this.touchOffset = this.offset;
+//     }
 
-    this.touchOffset -= this.posX2;
-    this.carousel.style.transform = `translate3d(${this.touchOffset}px, 0, 0)`;
-  }
+//     this.touchOffset -= this.posX2;
+//     this.carousel.style.transform = `translate3d(${this.touchOffset}px, 0, 0)`;
+//   }
 
-  dragEnd() {
-    this.posFinal = this.touchOffset;
-    if (this.posFinal - this.posInitial < -this.threshold) {
-      this.next();
-    } else if (this.posFinal - this.posInitial > this.threshold) {
-      this.prev();
-    } else {
-      this.carousel.style.transform = `translate3d(${this.posInitial}px, 0, 0)`;
-      this.touchOffset = this.offset;
-    }
+//   dragEnd() {
+//     this.posFinal = this.touchOffset;
+//     if (this.posFinal - this.posInitial < -this.threshold) {
+//       this.next();
+//     } else if (this.posFinal - this.posInitial > this.threshold) {
+//       this.prev();
+//     } else {
+//       this.carousel.style.transform = `translate3d(${this.posInitial}px, 0, 0)`;
+//       this.touchOffset = this.offset;
+//     }
 
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
-}
+//     document.onmouseup = null;
+//     document.onmousemove = null;
+//   }
+// }
 
-new Carousel();
+// new Carousel();
 
-//Seleccionar una imagen e incluirla como imagen avatar del usuario;
+// //Seleccionar una imagen e incluirla como imagen avatar del usuario;
 
-function cambiarAvatar(nombreImagen) {
-  var avatar = document.getElementById("avatarUser");
-  avatar.style.backgroundImage =
-    "url('assets/images/avatars/" + nombreImagen + "')";
-  avatar.style.backgroundSize = "cover";
-}
+// function cambiarAvatar(nombreImagen) {
+//   var avatar = document.getElementById("avatarUser");
+//   avatar.style.backgroundImage =
+//     "url('assets/images/avatars/" + nombreImagen + "')";
+//   avatar.style.backgroundSize = "cover";
+// }
 
 //-------------------------------------------------------------------------------------
 

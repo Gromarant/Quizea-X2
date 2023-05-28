@@ -1,7 +1,6 @@
 //firebase configuración
 //-----> FIREBASE_CONFIGURATION HERE
 
-
 //Inicialización de Firebase y variables
 firebase.initializeApp(firebaseConfig);
 const userEmail = document.querySelector('#email');
@@ -22,7 +21,7 @@ const userSignUp = async (email, password) => {
         id: user.uid,
         email: user.email,
       });
-
+     
       location.reload();
     })
     .catch((error) => {
@@ -32,6 +31,30 @@ const userSignUp = async (email, password) => {
       console.log("System error:" +  errorCode + ' ' + errorMessage);
     });
 };
+
+/* Create user document*/
+// function createUserDocument(user) {
+//   db.collection('users')
+//   .add({
+//     userId: user.uid,
+//     nickName,
+//     games: [
+//       {
+//         gameNumber,
+//         gameDate,
+//         gameHour,
+//         questions: [],
+//       }
+//     ]
+//   })
+//   db.collection('users')
+//     .doc(user.uid)
+//     .set(docData)
+//     .then(() => {
+//     console.log("Document successfully written!");
+//   });
+// };
+
 
 //Datos de registro
 const dataToSignUp = () => {
@@ -95,15 +118,15 @@ const userSignOut = async () => {
 firebase.auth().onAuthStateChanged(function (user) {
   if (user) {
     navigateToHome();
-    db.collection('users')
-      .get()
-      .then(snapshot => {
-        printreviewQuestions(snapshot.docs)
-      })
+    // db.collection('users')
+    //   .get()
+    //   .then(snapshot => {
+    //     printreviewQuestions(snapshot.docs)
+    //   })
       console.log(`Log user: ${user.email} ${user.uid}`);
   } 
   else {
-    printreviewQuestions([]);
+    // printreviewQuestions([]);
   }
 });
 

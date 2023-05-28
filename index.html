@@ -44,7 +44,7 @@
 
       <article id="home">
         <p class="breadcrumbAnswer correct">Texto de bienvenida al jugador en la home page</p>
-        <div class="wrapper">
+        <!-- <div class="wrapper">
           <div class="wrapper-inner">
             <ul id="carousel" class="carousel">
               <li
@@ -126,7 +126,7 @@
               />
             </svg>
           </span>
-        </div>
+        </div> -->
         <input type="text" name="nickName" id="nickName" placeholder="NickName">
         <button class="btn fillstyleBtn saveNicknameBtn">Save</button>
       </article>
@@ -139,7 +139,7 @@
           <p class="dataTime"></p>
         </article>
         <h2 class="graphicTitle">Graphic of your games history</h2>
-        <img src="" alt="Graphic of games history">
+        <canvas id="scoring"></canvas>
       </section>
 
       <section id="review"></section>
@@ -166,6 +166,7 @@
         </ul>
       </nav>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@latest/dist/Chart.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-auth.js"></script>
