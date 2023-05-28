@@ -55,6 +55,31 @@ const userSignIn = async () => {
     })
 };
 
+//Registro/acceso con Google
+const signInWithGoogle = () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  firebase.auth().signInWithRedirect(provider);
+  firebase.auth()
+  .getRedirectResult()
+  .then((result) => {
+    if (result.credential) {
+      /** @type {firebase.auth.OAuthCredential} */
+      const credential = result.credential;
+      const token = credential.accessToken;
+    }
+    const user = result.user;
+    console.log('user google', user);
+  })
+  .catch((error) => {
+    let errorCode = error.code;
+    let errorMessage = error.message;
+    let email = error.email;
+    let credential = error.credential;
+  });
+}
+
+//Salida de la app
 const userSignOut = async () => {
   let user = await firebase.auth().currentUser;
 
@@ -112,7 +137,8 @@ function printreviewQuestions(data) {
 }
 
 //Events
-document.querySelector('#registration').addEventListener('submit', dataToSignUp);
 document.querySelector('#logIn').addEventListener('click', userSignIn);
 document.querySelector('#signUp').addEventListener('click', userSignUp);
 document.querySelector('#logOut').addEventListener('click', userSignOut);
+document.querySelector('#registration').addEventListener('submit', dataToSignUp);
+document.querySelector('#googleBtn').addEventListener('click', signInWithGoogle);
