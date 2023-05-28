@@ -36,7 +36,7 @@ The Quiz game is compatible with a wide range of devices, including:
 
 ## Responsive Design
 
-<img align="center" src="/assets/images/">
+<!-- <img align="center" src="/assets/images/"> -->
 <br>
 
 Quiz game is designed with focus on user experience on mobile devices. The responsive design ensures that the game adapts and looks good on different screen sizes and devices.
