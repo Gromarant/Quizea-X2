@@ -1,6 +1,7 @@
 //firebase configuración
 //-----> FIREBASE_CONFIGURATION HERE
 
+
 //Inicialización de Firebase y variables
 firebase.initializeApp(firebaseConfig);
 const userEmail = document.querySelector('#email');

@@ -11,7 +11,7 @@
 <body>
     <header>
       <nav>
-        <img id="avatar" class="avatar" src="assets/images/avatars/defaultAvatar.jpg" alt="contactAvatar">
+        <img id="avatarUser" class="avatar" src="assets/images/avatars/defaultAvatar.jpg" alt="contactAvatar">
         <div id="headerMenu"><span class="iconify menu" data-icon="ic:round-menu"></span></div>
         <ul class="navHamburgerMenu">
           <li class="navigateToHomeBtn">Home</li> 
@@ -44,6 +44,89 @@
 
       <article id="home">
         <p class="breadcrumbAnswer correct">Texto de bienvenida al jugador en la home page</p>
+        <div class="wrapper">
+          <div class="wrapper-inner">
+            <ul id="carousel" class="carousel">
+              <li
+                class="item"
+                id="item01"
+                onclick="cambiarAvatar('avtr01.jpg')"
+              ></li>
+              <li
+                class="item"
+                id="item02"
+                onclick="cambiarAvatar('avtr02.jpg')"
+              ></li>
+              <li
+                class="item"
+                id="item03"
+                onclick="cambiarAvatar('avtr03.jpg')"
+              ></li>
+              <li
+                class="item"
+                id="item04"
+                onclick="cambiarAvatar('avtr04.jpg')"
+              ></li>
+              <li
+                class="item"
+                id="item05"
+                onclick="cambiarAvatar('avtr05.jpg')"
+              ></li>
+              <li
+                class="item"
+                id="item06"
+                onclick="cambiarAvatar('avtr_default.jpg')"
+              ></li>
+              <li class="item">go</li>
+              <li class="item">back</li>
+              <li class="item">now</li>
+            </ul>
+          </div>
+  
+          <span
+            role="button"
+            id="prev"
+            class="control-prev"
+            data-action="slideLeft"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="#FFFFFF"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </span>
+  
+          <span
+            role="button"
+            id="next"
+            class="control-next"
+            data-action="slideRight"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="#FFFFFF"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </span>
+        </div>
         <input type="text" name="nickName" id="nickName" placeholder="NickName">
         <button class="btn fillstyleBtn saveNicknameBtn">Save</button>
       </article>
