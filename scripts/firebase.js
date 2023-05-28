@@ -1,5 +1,14 @@
 //firebase configuración
 //-----> FIREBASE_CONFIGURATION HERE
+const firebaseConfig = {
+  apiKey: "AIzaSyBAF84mZM38GNZjZ4hdE-28FnHDM77F5rg",
+  authDomain: "quizeax2.firebaseapp.com",
+  projectId: "quizeax2",
+  storageBucket: "quizeax2.appspot.com",
+  messagingSenderId: "397962594102",
+  appId: "1:397962594102:web:5740a7404606e1bcd01597"
+};
+
 
 //Inicialización de Firebase y variables
 firebase.initializeApp(firebaseConfig);
@@ -9,20 +18,17 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 
-//Registro de usuario
+//Registro de usuario ------------------------------
 const userSignUp = async (email, password) => {
   auth
     .createUserWithEmailAndPassword(email, password)
     .then(userCredential => {
       let user = userCredential.user;
-      console.log(`Sign up as ${user.email} ID:${user.uid}`) //*create Alert <----*/
+      console.log(`se ha registrado ${user.email} ID:${user.uid}`)
+      alert(`se ha registrado ${user.email} ID:${user.uid}`)
       
-      createUser({
-        id: user.uid,
-        email: user.email,
-      });
-     
-      location.reload();
+      createUserDocument(user);
+      localStorage.setItem('currentUser', JSON.stringify(user.uid) );
     })
     .catch((error) => {
       /*create Alert messsage <-----*/
@@ -31,33 +37,9 @@ const userSignUp = async (email, password) => {
       console.log("System error:" +  errorCode + ' ' + errorMessage);
     });
 };
-
-/* Create user document*/
-// function createUserDocument(user) {
-//   db.collection('users')
-//   .add({
-//     userId: user.uid,
-//     nickName,
-//     games: [
-//       {
-//         gameNumber,
-//         gameDate,
-//         gameHour,
-//         questions: [],
-//       }
-//     ]
-//   })
-//   db.collection('users')
-//     .doc(user.uid)
-//     .set(docData)
-//     .then(() => {
-//     console.log("Document successfully written!");
-//   });
-// };
-
-
+      
 //Datos de registro
-const dataToSignUp = () => {
+const dataToSignUp = (e) => {
   e.preventDefault();
   let email = e.target.elements.email.value;
   let password = e.target.elements.password.value;
@@ -109,6 +91,7 @@ const userSignOut = async () => {
 
   firebase.auth().signOut().then(() => {
     console.log("GoodBye: " + user.email)
+    navigateToRegistration();
   }).catch((error) => {
     console.log("Error with log out: " + error);
   });
@@ -118,22 +101,30 @@ const userSignOut = async () => {
 firebase.auth().onAuthStateChanged(function (user) {
   if (user) {
     navigateToHome();
-    // db.collection('users')
-    //   .get()
-    //   .then(snapshot => {
-    //     printreviewQuestions(snapshot.docs)
-    //   })
-      console.log(`Log user: ${user.email} ${user.uid}`);
   } 
   else {
-    // printreviewQuestions([]);
+    printreviewQuestions([]);
   }
 });
 
 
+/* Manejo de documentos /C.R.U.D ------------------------------*/
+function createUserDocument(user) {
+  db.collection('users')
+  .add({
+    userId: user.uid,
+    nickName: '',
+    games: [],
+  })
+  .then((docRef) => console.log("Document written with ID: ", docRef.id))
+  .catch((error) => console.error("Error adding document: ", error))
+};
+
+
+document.querySelector('.saveNicknameBtn').addEventListener('click', storeNickName);
+document.querySelector('#play').addEventListener('click', navigateToQuiz);
 /*---> Control de bases de datos y despliegue de info <--- */
 function printreviewQuestions(data) {
-  console.log('Firebase data', data);
 
   data.forEach(doc => {
     console.log('Firebase doc', doc);
@@ -162,7 +153,6 @@ function printreviewQuestions(data) {
 
 //Events
 document.querySelector('#logIn').addEventListener('click', userSignIn);
-document.querySelector('#signUp').addEventListener('click', userSignUp);
 document.querySelector('#logOut').addEventListener('click', userSignOut);
 document.querySelector('#registration').addEventListener('submit', dataToSignUp);
 document.querySelector('#googleBtn').addEventListener('click', signInWithGoogle);

@@ -54,11 +54,8 @@ let currentQuestionNumber = 1;
 let allCorrectAnswers = [];
 let selectedAnswers = [];
 let comparedAnswers = [];
-let gameNumber = 1;
+let currentGameNumber = 1;
 let users = [];
-
-let playerId;
-let nickName;
 
 // /*---> mezcla las preguntas y o las respuestas */
 function shuffled(elements) {
@@ -183,33 +180,6 @@ function setGameTime() {
   document.querySelector('.dataTime').innerHTML = `Game date: ${date}, Game Hour:${hour}`;
 }
 
-// //Modelo de datos para guardar las partidas
-function setUsersCollectionStructure() {
-  let time = storeDateTime();
-  
-  for (let index=0; index<data.results.length; index++) {
-    let question = data.results[index];
-    user.questions.push(question);
-  }
-  let user = ({
-    userId: '',
-    nickName,
-    games: [
-      {
-        gameNumber,
-        gameDate: time.date,
-        gameHour: time.hour,
-        questions: [],
-      }
-    ]
-  })
-  user.gameNumber = gameNumber;
-  user.gameDate = time.date;
-  user.gameHour = time.hour;
-  users.push(gamesPlayed);
-}
-
-
 //---> Asigna el evento click a una colección
 const setEventListenerOfClickEvent = (targetElementsArr, handlerFunction) => {
   targetElementsArr.forEach(element => {
@@ -244,13 +214,6 @@ function navigateToHome() {
   let elementsToShow = getElements(['#avatarUser', '#headerMenu', '#home', '#play']);
   hideElements(elementsToHide);
   showElements(elementsToShow);
-  
-  getElement('.saveNicknameBtn').addEventListener('click', () => {
-    console.log('nickName:', getElement('#nickName').value);
-    /*---> Add NickName to firebase <--- */
-    getElement('#nickName').value = '';
-  });
-  getElement('#play').addEventListener('click', navigateToQuiz);
 }
 
 function navigateToQuiz() {
