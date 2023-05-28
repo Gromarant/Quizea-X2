@@ -153,11 +153,26 @@ class Carousel {
 
 new Carousel();
 
-//Seleccionar una imagen e incluirla como imagen avatar del usuario;
 
+var items = document.querySelectorAll(".item");
+var avatar = document.getElementById("avatarUser");
+
+items.forEach(function (item) {
+  item.addEventListener("click", function () {
+    var nombreImagen = this.id.replace("item", "avtr") + ".jpg";
+    avatar.style.backgroundImage =
+      "url('assets/images/avatars/" + nombreImagen + "')";
+    avatar.style.backgroundSize = "cover";
+  });
+});
+
+
+//Seleccionar una imagen e incluirla como imagen avatar del usuario;
+/*old version
 function cambiarAvatar(nombreImagen) {
   var avatar = document.getElementById("avatarUser");
   avatar.style.backgroundImage =
     "url('assets/images/avatars/" + nombreImagen + "')";
   avatar.style.backgroundSize = "cover";
 }
+*/
