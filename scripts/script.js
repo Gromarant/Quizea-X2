@@ -1,5 +1,3 @@
-// const dataBase = required '/scripts/dataBase.js';
-
 //Llamada a la API
 // async function getData() {
 //   fetch("https://opentdb.com/api.php?amount=10&type=multiple")
@@ -89,7 +87,7 @@ function printQuestion(object) {
   let answers = shuffled( getAnswersOneQuestion(object) );
 
   getElement('#quiz').innerHTML =
-  `<section>
+  `<section id="quizQuestion">
      <article>
        <p class="breadcrumbs">Question ${currentQuestionNumber}/${data.results.length}</p>
        <p id="question">${object.question}</p>
@@ -112,32 +110,6 @@ function printQuestion(object) {
    const labels = document.querySelectorAll('.formLabel');
    const radioButtons = document.querySelectorAll('.radio');
    setEventListenerOfClickEvent([...labels, ...radioButtons], handleSelectAnswer);
-};
-
-// //Pinta en el DOM las preguntas 
-function printReview(object) {
-  let gameData = [...object].map(gamePlayed => gamePlayed["games"].questions);
-  let answers = getAnswersReview(gameData);
-
-  getElement('#review').innerHTML +=
-  `<section>
-     <article>
-     <p class="breadcrumbs">Question ${currentQuestionNumber}/${objectQuestion.length}</p>
-     <p id="questionRev">${gameData.questions.question}</p>
-     </article>
-     <label class="formLabel" for="answer1">${answers[0]}
-       <input type="radio" class="radio" name="answer" id="answer1" value="${answers[0]}">
-     </label>
-     <label class="formLabel" for="answer2">${answers[1]}
-       <input type="radio" class="radio" name="answer" id="answer2" value="${answers[1]}">
-     </label>
-     <label class="formLabel" for="answer3">${answers[2]}
-       <input type="radio" class="radio" name="answer" id="answer3" value="${answers[2]}">
-     </label>
-     <label class="formLabel" for="answer4">${answers[3]}
-       <input type="radio" class="radio" name="answer" id="answer4" value="${answers[3]}">
-     </label>
-  </section>`
 };
 
 // //Pinta en el DOM las preguntas y respuestas una a una
@@ -265,9 +237,6 @@ const getElements = (selectorArr) => selectorArr.map(selector => getElement(sele
 function navigateToRegistration() {
   let elementsToHide = getElements(['#avatar', '#headerMenu', '#home', '#results', '#play', '#next', '#seeResults', '.navHamburgerMenu']);
   hideElements(elementsToHide);
-
-  getElement('#signUp').addEventListener('click', navigateToHome);
-  getElement('#logIn').addEventListener('click', navigateToHome);
 }
 navigateToRegistration() //inicialización del juego
 
@@ -278,9 +247,9 @@ function navigateToHome() {
   hideElements(elementsToHide);
   showElements(elementsToShow);
   
-  getElement('#logIn').innerHTML = 'Play';
   getElement('.saveNicknameBtn').addEventListener('click', () => {
     console.log('nickName:', getElement('#nickName').value);
+    /*---> Add NickName to firebase <--- */
     getElement('#nickName').value = '';
   });
   getElement('#play').addEventListener('click', navigateToQuiz);

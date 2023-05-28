@@ -1,54 +1,54 @@
-//firebase config
-//-----> HERE
+//firebase configuración
+//-----> FIREBASE_CONFIGURATION HERE
 
-//Inicialización de Firebase
+//Inicialización de Firebase y variables
 firebase.initializeApp(firebaseConfig);
-
 const userEmail = document.querySelector('#email');
 const userPassword = document.querySelector('#password');
+const auth = firebase.auth();
+const db = firebase.firestore();
+
 
 //Registro de usuario
 const userSignUp = async (email, password) => {
-  firebase
-    .auth()
+  auth
     .createUserWithEmailAndPassword(email, password)
     .then(userCredential => {
       let user = userCredential.user;
-      alert(`Your user has been registered ${user.email} ID:${user.uid}`)
+      console.log(`Sign up as ${user.email} ID:${user.uid}`) //*create Alert <----*/
       
       createUser({
         id: user.uid,
         email: user.email,
       });
+
+      location.reload();
     })
     .catch((error) => {
+      /*create Alert messsage <-----*/
       let errorCode = error.code;
       let errorMessage = error.message;
       console.log("System error:" +  errorCode + ' ' + errorMessage);
     });
 };
-// email test: mafer@gmail.com AMZn+humTdumt$@t0nAwa11
-// email test: miguel@gmail.com  9zg9D4XwzQXbFDZK7
-// email test: vicky@gmail.com  AMZn+humTdumt$@t0nAwa11
 
-//Obtener datos de contacto (get contact data)
-document.querySelector('#registration').addEventListener('submit', (e) => {
+//Datos de registro
+const dataToSignUp = () => {
   e.preventDefault();
   let email = e.target.elements.email.value;
   let password = e.target.elements.password.value;
 
   password ? userSignUp(email, password) : alert("error password");
-})
-
+}
 
 //Acceso a usuario registrado con correo
 const userSignIn = async () => {
   const signInEmail = await userEmail.value;
   const signInPassword = await userPassword.value;
-  firebase.auth().signInWithEmailAndPassword(signInEmail, signInPassword)
+  auth.signInWithEmailAndPassword(signInEmail, signInPassword)
     .then(userCredential => {
-      let user = userCredential.user;
-      alert(`your have login as ${user.email} ID:${user.uid}`);
+      const user = userCredential.user;
+      console.log(`your have login as ${user.email} ID:${user.uid}`);
     })
     .catch(error => {
       console.log("Error login:", error.message);
@@ -65,17 +65,54 @@ const userSignOut = async () => {
   });
 };
 
-//User status
+//Estado de usuario
 firebase.auth().onAuthStateChanged(function (user) {
   if (user) {
     navigateToHome();
-    console.log(`Log user: ${user.email} ${user.uid}`);
-  } else {
-    console.log("There is no user!");
+    db.collection('users')
+      .get()
+      .then(snapshot => {
+        printreviewQuestions(snapshot.docs)
+      })
+      console.log(`Log user: ${user.email} ${user.uid}`);
+  } 
+  else {
+    printreviewQuestions([]);
   }
 });
 
+
+/*---> Control de bases de datos y despliegue de info <--- */
+function printreviewQuestions(data) {
+  console.log('Firebase data', data);
+
+  data.forEach(doc => {
+    console.log('Firebase doc', doc);
+    // reviewQuestion =
+    //  `<section id="reviewQuestion">
+    //     <article>
+    //     <p class="breadcrumbs">Question ${currentQuestionNumber}/${objectQuestion.length}</p>
+    //     <p id="questionRev">${gameData.questions.question}</p>
+    //     </article>
+    //     <label class="formLabel" for="answer1">${answers[0]}
+    //       <input type="radio" class="radio" name="answer" id="answer1" value="${answers[0]}">
+    //     </label>
+    //     <label class="formLabel" for="answer2">${answers[1]}
+    //       <input type="radio" class="radio" name="answer" id="answer2" value="${answers[1]}">
+    //     </label>
+    //     <label class="formLabel" for="answer3">${answers[2]}
+    //       <input type="radio" class="radio" name="answer" id="answer3" value="${answers[2]}">
+    //     </label>
+    //     <label class="formLabel" for="answer4">${answers[3]}
+    //       <input type="radio" class="radio" name="answer" id="answer4" value="${answers[3]}">
+    //     </label>
+    //   </section>`
+  });
+  // Document.querySelector('#review') += reviewQuestion;
+}
+
 //Events
+document.querySelector('#registration').addEventListener('submit', dataToSignUp);
 document.querySelector('#logIn').addEventListener('click', userSignIn);
 document.querySelector('#signUp').addEventListener('click', userSignUp);
 document.querySelector('#logOut').addEventListener('click', userSignOut);
