@@ -1,66 +1,147 @@
-// const dataBase = required '/scripts/dataBase.js';
-
-//Llamada a la API
-// async function getData() {
-//   fetch("https://opentdb.com/api.php?amount=10&type=multiple")
-//   let response = await response.json();
-//   let data = await response;
-//   return data;
-// }
+// Llamada a la API
+function getData() {
+  fetch("https://opentdb.com/api.php?amount=10&type=multiple")
+                .then(res=>res.json())
+                .then(apiData => {
+                  let data = apiData;
+                  navigateToHome();
+                })
+                .catch(error => console.log(error));
+}
 
 let data = {
   "response_code": 0,
   "results": [
     {
-      "category": "Entertainment: Film",
-      "type": "multiple",
-      "difficulty": "easy",
-      "question": "Who directed &quot;E.T. the Extra-Terrestrial&quot; (1982)?",
-      "correct_answer": "Steven Spielberg",
-      "incorrect_answers": [
-        "Stanley Kubrick",
-        "James Cameron",
-        "Tim Burton"
-      ]
-    },
-    {
-      "category": "Entertainment: Cartoon & Animations",
-      "type": "multiple",
-      "difficulty": "easy",
-      "question": "Which &#039;Family Guy&#039; character got his own spin-off show in 2009?",
-      "correct_answer": "Cleveland Brown",
-      "incorrect_answers": [
-        "Glenn Quagmire",
-        "Joe Swanson",
-        "The Greased-up Deaf Guy"
-      ]
-    },
-    {
       "category": "Geography",
       "type": "multiple",
       "difficulty": "easy",
-      "question": "What state is the largest state of the United States of America?",
-      "correct_answer": "Alaska",
+      "question": "Which of these African countries list &quot;Spanish&quot; as an official language?",
+      "correct_answer": "Equatorial Guinea",
       "incorrect_answers": [
-        "California",
-        "Texas",
-        "Washington"
+        "Guinea",
+        "Cameroon",
+        "Angola"
       ]
     },
-  ],
+    {
+      "category": "Entertainment: Books",
+      "type": "multiple",
+      "difficulty": "medium",
+      "question": "The title of Adolf Hitler&#039;s autobiography &quot;Mein Kampf&quot; is what when translated to English?",
+      "correct_answer": "My Struggle",
+      "incorrect_answers": [
+        "My Hatred",
+        "My Sadness",
+        "My Desire"
+      ]
+    },
+    {
+      "category": "Entertainment: Japanese Anime & Manga",
+      "type": "multiple",
+      "difficulty": "medium",
+      "question": "In the &quot;Toaru Majutsu no Index&quot; anime, Touma Kamijou is a level 0 esper that has the ability to do what?",
+      "correct_answer": "Dispell any esper or magical powers",
+      "incorrect_answers": [
+        "Teleport",
+        "Make telepathic communications",
+        "Create electricity from his own body"
+      ]
+    },
+    {
+      "category": "Entertainment: Video Games",
+      "type": "multiple",
+      "difficulty": "easy",
+      "question": "Which of the following is not a faction in Tom Clancy&#039;s The Division?",
+      "correct_answer": "CDC",
+      "incorrect_answers": [
+        "Cleaners",
+        "Last Man Batallion",
+        "Rikers"
+      ]
+    },
+    {
+      "category": "Entertainment: Film",
+      "type": "multiple",
+      "difficulty": "medium",
+      "question": "In which movie does Robin Williams&#039; character have to disguise themselves into a woman?",
+      "correct_answer": "Mrs. Doubtfire",
+      "incorrect_answers": [
+        "Old Dogs",
+        "Jumanji",
+        "Awakenings"
+      ]
+    },
+    {
+      "category": "Entertainment: Books",
+      "type": "multiple",
+      "difficulty": "easy",
+      "question": "What is the name of Sherlock Holmes&#039;s brother?",
+      "correct_answer": "Mycroft Holmes",
+      "incorrect_answers": [
+        "Mederi Holmes",
+        "Martin Holmes",
+        "Herbie Hancock Holmes"
+      ]
+    },
+    {
+      "category": "Entertainment: Japanese Anime & Manga",
+      "type": "multiple",
+      "difficulty": "easy",
+      "question": "What animation studio produced &quot;Gurren Lagann&quot;?",
+      "correct_answer": "Gainax",
+      "incorrect_answers": [
+        "Kyoto Animation",
+        "Pierrot",
+        "A-1 Pictures"
+      ]
+    },
+    {
+      "category": "Entertainment: Board Games",
+      "type": "multiple",
+      "difficulty": "medium",
+      "question": "Europa Universalis is a strategy video game based on which French board game?",
+      "correct_answer": "Europa Universalis",
+      "incorrect_answers": [
+        "Europe and the Universe",
+        "Europa!",
+        "Power in Europe"
+      ]
+    },
+    {
+      "category": "Mythology",
+      "type": "multiple",
+      "difficulty": "easy",
+      "question": "What mytological creatures have women&#039;s faces and vultures&#039; bodies?",
+      "correct_answer": "Harpies",
+      "incorrect_answers": [
+        "Mermaids",
+        "Nymph",
+        "Lilith"
+      ]
+    },
+    {
+      "category": "Science: Computers",
+      "type": "multiple",
+      "difficulty": "hard",
+      "question": "Which of the following computer components can be built using only NAND gates?",
+      "correct_answer": "ALU",
+      "incorrect_answers": [
+        "CPU",
+        "RAM",
+        "Register"
+      ]
+    }
+  ]
 };
-
 // Inicialización de variables
 let questionIndex = 0;
 let currentQuestionNumber = 1;
 let allCorrectAnswers = [];
 let selectedAnswers = [];
 let comparedAnswers = [];
-let gamesHistoryData = [];
-
-
-let playerId;
-let nickName;
+let currentGameNumber = 1;
+let gamesPlayed = [];
 
 // /*---> mezcla las preguntas y o las respuestas */
 function shuffled(elements) {
@@ -84,12 +165,34 @@ function getAnswersReview(data) {
   return allquestionAnswers;
 }
 
+const questionStructure = (props) => {
+  return `<section id="${props.id}">
+            <article>
+            <p class="breadcrumbs">Question ${props.questionNum}/${props.totalQuestions.length}</p>
+            <p id="${props.idQuestion}">${props.question}</p>
+            </article>
+            <label class="formLabel" for="answer1">${props.answers[0]}
+              <input type="radio" class="radio" name="answer" id="answer1" value="${props.answers[0]}">
+            </label>
+            <label class="formLabel" for="answer2">${props.answers[1]}
+              <input type="radio" class="radio" name="answer" id="answer2" value="${props.answers[1]}">
+            </label>
+            <label class="formLabel" for="answer3">${props.answers[2]}
+              <input type="radio" class="radio" name="answer" id="answer3" value="${props.answers[2]}">
+            </label>
+            <label class="formLabel" for="answer4">${props.answers[3]}
+              <input type="radio" class="radio" name="answer" id="answer4" value="${props.answers[3]}">
+            </label>
+          </section>`
+}
+
+
 //Pinta en el DOM las preguntas y respuestas una a una
 function printQuestion(object) {
   let answers = shuffled( getAnswersOneQuestion(object) );
 
   getElement('#quiz').innerHTML =
-  `<section>
+  `<section id="quizQuestion">
      <article>
        <p class="breadcrumbs">Question ${currentQuestionNumber}/${data.results.length}</p>
        <p id="question">${object.question}</p>
@@ -107,38 +210,7 @@ function printQuestion(object) {
        <input type="radio" class="radio" name="answer" id="answer4" value="${answers[3]}">
      </label>
   </section>`
-
-   //Asignación del evento a los label y radio buttons
-   const labels = document.querySelectorAll('.formLabel');
-   const radioButtons = document.querySelectorAll('.radio');
-   setEventListenerOfClickEvent([...labels, ...radioButtons], handleSelectAnswer);
-};
-
-// //Pinta en el DOM las preguntas 
-function printReview(object) {
-  let gameData = [...object].map(gamePlayed => gamePlayed["games"].questions);
-  let answers = getAnswersReview(gameData);
-
-  getElement('#review').innerHTML +=
-  `<section>
-     <article>
-     <p class="breadcrumbs">Question ${currentQuestionNumber}/${objectQuestion.length}</p>
-     <p id="questionRev">${gameData.questions.question}</p>
-     </article>
-     <label class="formLabel" for="answer1">${answers[0]}
-       <input type="radio" class="radio" name="answer" id="answer1" value="${answers[0]}">
-     </label>
-     <label class="formLabel" for="answer2">${answers[1]}
-       <input type="radio" class="radio" name="answer" id="answer2" value="${answers[1]}">
-     </label>
-     <label class="formLabel" for="answer3">${answers[2]}
-       <input type="radio" class="radio" name="answer" id="answer3" value="${answers[2]}">
-     </label>
-     <label class="formLabel" for="answer4">${answers[3]}
-       <input type="radio" class="radio" name="answer" id="answer4" value="${answers[3]}">
-     </label>
-  </section>`
-};
+}
 
 // //Pinta en el DOM las preguntas y respuestas una a una
 const printNextQuestion = () => {
@@ -190,6 +262,14 @@ const getComparedAnswers = () => {
   return correctAnswers.map((answer, index) => answer === playerAnswer[index])
 }
 
+const setResultHeader = () => {
+  const score = getComparedAnswers()
+               .filter(question => question === true).length;
+               console.log('score', score);
+               console.log(data.results.length);
+  getElement('.scoreCard').src = `assets/images/scoreCards/${score}10.svg`;
+}
+
 //---> clean localStorage
 function cleanLocalStorage() {
   for (let index=0; index<data.results.length; index++) {
@@ -211,32 +291,9 @@ function setGameTime() {
   document.querySelector('.dataTime').innerHTML = `Game date: ${date}, Game Hour:${hour}`;
 }
 
-//Modelo de datos para guardar las partidas
-function setGamesHistoryDataStructure() {
-  let time = storeDateTime();
-  let comparedAnswers = getComparedAnswers();
-  
-  for (let index=0; index<data.results.length; index++) {
-    let question = data.results[index];
+// Guardar selecciones del usuario
+const answerOfQuestion = (object) => {
 
-    let gamesPlayed = {
-      playerId,
-      nickName,
-      games: [
-        {
-          gameDate: time.date,
-          gameHour: time.hour,
-          isSelectedTheCorrectAnswer: comparedAnswers[index],  /*-->Variable de si contestó correctamente*/
-          questions: [
-            question
-          ],
-        },
-      ],
-    }
-    gamesPlayed.games.isSelectedTheCorrectAnswer = comparedAnswers[questionIndex];
-    gamesPlayed.games.questions = question;
-    gamesHistoryData.push(gamesPlayed);
-  }
 }
 
 
@@ -261,31 +318,77 @@ const addClass = (elementWhereAdd, newClass) => elementWhereAdd.classList.add(ne
 const getElement = (selector) => document.querySelector(selector);
 const getElements = (selectorArr) => selectorArr.map(selector => getElement(selector));
 
+
+//Actualizar nickName
+const updateNickName = (e) => {
+  e.preventDefault();
+
+  let shortName = getElement('#nickName').value;
+
+  if (shortName) {
+    hideElement('#nickName').classList.add('unvisible');
+    shortName = '';
+    getElement('.saveNicknameBtn').innerHTML = update;
+  }
+}
+
+
 //Despliegado de las secciones de la app
 function navigateToRegistration() {
-  let elementsToHide = getElements(['#avatar', '#headerMenu', '#home', '#results', '#play', '#next', '#seeResults']);
+  let elementsToHide = getElements([
+    '#avatarUser', 
+    '#headerMenu', 
+    '#home', 
+    '#results', 
+    '#play', 
+    '#next', 
+    '#seeResults', 
+    '.navHamburgerMenu'
+  ]);
   hideElements(elementsToHide);
-
-  getElement('#signUp').addEventListener('click', navigateToHome);
-  getElement('#logIn').addEventListener('click', navigateToHome);
 }
 navigateToRegistration() //inicialización del juego
 
 
 function navigateToHome() {
-  let elementsToHide = getElements(['#registration', '#quiz', '#results', '#review', '#logIn', '#next', '#seeResults', '#footerMenu','.navHamburgerMenu']);
-  let elementsToShow = getElements(['#avatar', '#headerMenu', '#home', '#play']);
+  let elementsToHide = getElements([
+    '#registration', 
+    '#quiz', 
+    '#results', 
+    '#review'
+    , '#logIn', 
+    '#next', 
+    '#seeResults', 
+    '#footerMenu',
+    '.navHamburgerMenu'
+  ]);
+  let elementsToShow = getElements([
+    '#avatarUser', 
+    '#headerMenu', 
+    '#home', 
+    '#play'
+  ]);
   hideElements(elementsToHide);
   showElements(elementsToShow);
-  
-  getElement('#logIn').innerHTML = 'Play';
-  getElement('.saveNicknameBtn').addEventListener('click', () => console.log('nickName:', document.querySelector('#nickName').value));
-  getElement('#play').addEventListener('click', navigateToQuiz);
 }
 
 function navigateToQuiz() {
-  let elementsToHide = getElements(['#registration', '#home' , '#results', '#review', '#logIn', '#play', '#seeResults', '#footerMenu']);
-  let elementsToShow = getElements(['#avatar', '#headerMenu', '#quiz', '#next']);
+  let elementsToHide = getElements([
+    '#registration', 
+    '#home' ,
+     '#results', 
+     '#review', 
+     '#logIn', 
+     '#play', 
+     '#seeResults', 
+     '#footerMenu'
+  ]);
+  let elementsToShow = getElements([
+    '#avatarUser', 
+    '#headerMenu', 
+    '#quiz', 
+    '#next'
+  ]);
   hideElements(elementsToHide);
   showElements(elementsToShow);
 
@@ -294,40 +397,131 @@ function navigateToQuiz() {
 };
 
 function navigateToResults() {
+  setResultHeader();
   questionIndex = 0;
   currentQuestionNumber = 1;
-  let elementsToHide = getElements(['#registration', '#home', '#quiz', '#review', '#logIn', '#play', '#next', '#seeResults']);
-  let elementsToShow = getElements(['#avatar', '#headerMenu', '#footerMenu', '#results']);
+  let elementsToHide = getElements([
+    '#registration', 
+    '#home', 
+    '#quiz', 
+    '#review', 
+    '#logIn', 
+    '#play', 
+    '#next', 
+    '#seeResults'
+  ]);
+  let elementsToShow = getElements([
+    '#avatarUser', 
+    '#headerMenu', 
+    '#footerMenu', 
+    '#results'
+  ]);
   hideElements(elementsToHide);
   showElements(elementsToShow);
 
   setGameTime();
   getComparedAnswers();
-  setGamesHistoryDataStructure();
   cleanLocalStorage();
+
   getElement('#navigateHomeBtn').addEventListener('click', navigateToHome);
   getElement('#navigateToQuizBtn').addEventListener('click', navigateToQuiz);
-
   getElement('#navigateReviewBtn').addEventListener('click', navigateToReview);
 };
 
-// // function setReviewStyles() {
-// //   if (historyData.games.isSelectedTheCorrectAnswer) {
-
-// //   }
-// // };
-
 function navigateToReview() { 
   let elementsToHide = getElements(['#registration', '#home', '#quiz', '#results', '#logIn', '#play', '#next', '#seeResults']);
-  let elementsToShow = getElements(['#avatar', '#headerMenu', '#footerMenu', '#review']);
+  let elementsToShow = getElements(['#avatarUser', '#headerMenu', '#footerMenu', '#review']);
   hideElements(elementsToHide);
   showElements(elementsToShow);
 
-  for (let i=0; i<gamesHistoryData.length; i++) {
-    printReview(gamesHistoryData);
+  for (let i=0; i<users.length; i++) {
+    printReview(users);
   };
 };
 
-const handleHamburguerMenu = () => document.querySelector('.navHamburgerMenu').classList.toggle('hidden');
+const handleHamburguerMenu = () => getElement('.navHamburgerMenu').classList.toggle('hidden');
 
-//Eventos
+//Partimos de estos datos que son inventados
+let games = {
+  game01: {
+     date: "2022-05-23",
+     hour: "20:32",
+     correctAnswersCounter: 2
+   },
+   game02: {
+     date: "2022-05-24",
+     hour: "10:15",
+     correctAnswersCounter: 8
+   },
+   game03: {
+     date: "2022-05-25",
+     hour: "18:45",
+     correctAnswersCounter: 10
+   }
+ };
+
+ 
+ //Pintando la gráfica
+
+ let canvasElement = document.getElementById("scoring");
+
+ let datehour = [];
+for (let game in games) {
+  let date = games[game].date;
+  let hour = games[game].hour;
+  datehour.push(` ${date} | ${hour}.`);
+}
+datehour.reverse();
+
+let scores = [];
+for (let game in games) {
+  let score = games[game].correctAnswersCounter;
+  scores.push(score);
+}
+scores.reverse();
+
+let config = {
+  type: "bar",
+  data: {
+      labels: datehour, 
+      datasets: [{
+          label: "Y's: score; X's: day|hour", 
+          data:scores,
+          backgroundColor: [
+              "rgba(255,166,66,0.2)",//Orange
+              "rgba(255,96,136,0.2)",//Red
+              "rgba(56,166,236,0.2)",//Blue
+              "rgba(76,196,196,0.2)",//Green
+              "rgba(156,106,255,0.2)",//Purple
+          ],
+          borderColor: [
+              "rgba(255,166,66,1)",//Orange
+              "rgba(255,96,136,1)",//Red
+              "rgba(56,166,236,1)",//Blue
+              "rgba(76,196,196,1)",//Green
+              "rgba(156,106,255,1)",//Purple
+          ],
+          borderWidth:1,
+      }]
+ },
+ options: {
+  scales: {
+    yAxes: [{
+      display: true,
+      ticks: {
+          beginAtZero: true
+      }  
+    }]
+  }
+}
+};
+
+ let scoring = new Chart(canvasElement, config)
+
+getElement('.saveNicknameBtn').addEventListener('click', updateNickName);
+getElement('#avatarUser').addEventListener('click', navigateToHome);
+getElement('.navigateToHomeBtn').addEventListener('click', navigateToHome);
+getElement('.navigateToQuizBtn').addEventListener('click', navigateToQuiz);
+getElement('.navigateToResultsBtn').addEventListener('click', navigateToResults);
+getElement('.navigateToReviewBtn').addEventListener('click', navigateToReview);
+getElement('#headerMenu').addEventListener('click', handleHamburguerMenu);

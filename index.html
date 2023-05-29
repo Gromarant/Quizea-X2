@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,38 +11,40 @@
 <body>
     <header>
       <nav>
-        <img id="avatar" class="avatar" src="assets/images/avatars/defaultAvatar.jpg" alt="contactAvatar">
+        <img id="avatarUser" class="avatar" src="assets/images/avatars/defaultAvatar.jpg" alt="contactAvatar">
         <div id="headerMenu"><span class="iconify menu" data-icon="ic:round-menu"></span></div>
         <ul class="navHamburgerMenu">
-          <a href="#home"><li class="">Home</li></a> <!-- agregarle color de selected<---> 
-          <a href="#quiz"><li class="navigateToQuizBtn">Play Quiz</li></a>
-          <a href="#Results"><li class="navigateToResultsBtn">Results</li></a>
-          <li class="logOut">Log out</li>
+          <li class="navigateToHomeBtn">Home</li> 
+          <li class="navigateToQuizBtn">Play Quiz</li>
+          <li class="navigateToResultsBtn">Results</li>
+          <li class="navigateToReviewBtn">Review</li>
+          <li id="logOut" class="logOut">Log out</li>
         </ul>
       </nav>
     </header>
     <main>
       <form id="registration">
         <article class="cardWelcome">
-          <p class="welcome"></p>
+          <p class="welcome">Welcome!!!!</p>
         </article>
-        <label for="googleBtn">
-          <span class="iconify" data-icon="flat-color-icons:google"></span>
-          <input type="button" name="googleBtn" id="googleBtn">
+        <label class="labelGoogle" for="googleBtn">
+          <span class="googleIcon iconify" data-icon="flat-color-icons:google"></span>
+          <input id="googleBtn" type="button" name="googleBtn" value="Sign Up with Google">
         </label>
         <label for="email">
           <span class="iconify" data-icon="material-symbols:mail"></span>
-          <input  name="contactEmail" id="email" placeholder="Email" >
+          <input  name="userEmail" id="email" placeholder="Email" required>
         </label>
         <label for="password">
           <span class="iconify" data-icon="mdi:password"></span>
-          <input type="password" name="password" id="password" placeholder="Password">
+          <input type="password" name="userpassword" id="password" placeholder="Password" required>
         </label>
-          <button id="signUp" class="btn SubmitBtn navigateToHomeBtn" type="submit">Sign up</button>
+          <button id="signUp" class="btn SubmitBtn" type="submit">Sign up</button>
       </form>
 
       <article id="home">
-        <p class="breadcrumbAnswer correct">Texto de bienvenida al jugador en la home page</p>
+        <p class="breadcrumbAnswer correct">Ready to embark on an exciting journey through knowledge? Put your thinking cap on and prepare to be challenged like never before. Join the Quiz Adventure Now!</p>
+        <p id="userNickName"></p>
         <input type="text" name="nickName" id="nickName" placeholder="NickName">
         <button class="btn fillstyleBtn saveNicknameBtn">Save</button>
       </article>
@@ -49,12 +52,12 @@
       <form id="quiz" class="flexColumnCenter"></form>
       
       <section id="results">
-        <img class="scoreCard" src="/assets/images/scoreCards/0810.svg">
+        <img class="scoreCard" src="assets/images/scoreCards/110.svg" alt="score results">
         <article class="scoreSection">
           <p class="dataTime"></p>
         </article>
         <h2 class="graphicTitle">Graphic of your games history</h2>
-        <img src="assets/images/grafica.svg" alt="Graphic of games history">
+        <canvas id="scoring"></canvas>
       </section>
 
       <section id="review"></section>
@@ -81,9 +84,12 @@
         </ul>
       </nav>
     </footer>
-
-    <script src="/scripts/script.js"></script>
-    <script src="/scripts/database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@latest/dist/Chart.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-auth.js"></script>
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <script src="/scripts/firebase.js"></script>
+    <script src="/scripts/script.js"></script>
 </body>
 </html>
