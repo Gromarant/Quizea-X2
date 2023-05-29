@@ -5,7 +5,7 @@ async function getData() {
   let data = await response;
   return data;
 }
-
+let data = await getData(); 
 
 // Inicialización de variables
 let questionIndex = 0;
@@ -61,40 +61,29 @@ const questionStructure = (props) => {
 
 
 //Pinta en el DOM las preguntas y respuestas una a una
-function printQuestion(object, elementSelector) {
+function printQuestion(object) {
+  let answers = shuffled( getAnswersOneQuestion(object) );
 
-  if (object === data.results) {
-    let answers = shuffled( getAnswersOneQuestion(object) );
-    let questionProps = {
-      idQuestion: 'quizQuestion',
-      questionNum: currentQuestionNumber,
-      question: data.results.question,
-      totalQuestions: data.results.length,
-      answers,
-    }
-    getElement(elementSelector).innerHTML = questionStructure(questionProps);
-
-    //Asignación del evento a los label y radio buttons
-    const labels = document.querySelectorAll('.formLabel');
-    const radioButtons = document.querySelectorAll('.radio');
-    setEventListenerOfClickEvent([...labels, ...radioButtons], handleSelectAnswer);
-  }
-  else {
-    let answers = getAnswersOneQuestion(object);
-    let questionProps = {
-      idQuestion: 'reviewQuestion',
-      questionNum: currentQuestionNumber,
-      question: gamesPlayed,
-      totalQuestions: data.results.length,
-      answers,
-    }
-    gamesPlayed.push(questionStructure(questionProps));
-
-    let correctAnswers = getAllCorrectAnswer();
-    const questions = data.results;
-  }
-};
-
+  getElement('#quiz').innerHTML =
+  `<section id="quizQuestion">
+     <article>
+       <p class="breadcrumbs">Question ${currentQuestionNumber}/${data.results.length}</p>
+       <p id="question">${object.question}</p>
+     </article>
+     <label class="formLabel" for="answer1">${answers[0]}
+       <input type="radio" class="radio" name="answer" id="answer1" value="${answers[0]}">
+     </label>
+     <label class="formLabel" for="answer2">${answers[1]}
+       <input type="radio" class="radio" name="answer" id="answer2" value="${answers[1]}">
+     </label>
+     <label class="formLabel" for="answer3">${answers[2]}
+       <input type="radio" class="radio" name="answer" id="answer3" value="${answers[2]}">
+     </label>
+     <label class="formLabel" for="answer4">${answers[3]}
+       <input type="radio" class="radio" name="answer" id="answer4" value="${answers[3]}">
+     </label>
+  </section>`
+}
 
 // //Pinta en el DOM las preguntas y respuestas una a una
 const printNextQuestion = () => {
@@ -179,6 +168,7 @@ function setGameTime() {
 const answerOfQuestion = (object) => {
 
 }
+
 
 //---> Asigna el evento click a una colección
 const setEventListenerOfClickEvent = (targetElementsArr, handlerFunction) => {
