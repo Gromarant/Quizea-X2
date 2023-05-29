@@ -1,52 +1,11 @@
-//Llamada a la API
-// async function getData() {
-//   fetch("https://opentdb.com/api.php?amount=10&type=multiple")
-//   let response = await response.json();
-//   let data = await response;
-//   return data;
-// }
+// Llamada a la API
+async function getData() {
+  fetch("https://opentdb.com/api.php?amount=10&type=multiple")
+  let response = await response.json();
+  let data = await response;
+  return data;
+}
 
-let data = {
-  "response_code": 0,
-  "results": [
-    {
-      "category": "Entertainment: Film",
-      "type": "multiple",
-      "difficulty": "easy",
-      "question": "Who directed &quot;E.T. the Extra-Terrestrial&quot; (1982)?",
-      "correct_answer": "Steven Spielberg",
-      "incorrect_answers": [
-        "Stanley Kubrick",
-        "James Cameron",
-        "Tim Burton"
-      ]
-    },
-    {
-      "category": "Entertainment: Cartoon & Animations",
-      "type": "multiple",
-      "difficulty": "easy",
-      "question": "Which &#039;Family Guy&#039; character got his own spin-off show in 2009?",
-      "correct_answer": "Cleveland Brown",
-      "incorrect_answers": [
-        "Glenn Quagmire",
-        "Joe Swanson",
-        "The Greased-up Deaf Guy"
-      ]
-    },
-    {
-      "category": "Geography",
-      "type": "multiple",
-      "difficulty": "easy",
-      "question": "What state is the largest state of the United States of America?",
-      "correct_answer": "Alaska",
-      "incorrect_answers": [
-        "California",
-        "Texas",
-        "Washington"
-      ]
-    },
-  ],
-};
 
 // Inicialización de variables
 let questionIndex = 0;
@@ -55,7 +14,7 @@ let allCorrectAnswers = [];
 let selectedAnswers = [];
 let comparedAnswers = [];
 let currentGameNumber = 1;
-let users = [];
+let gamesPlayed = [];
 
 // /*---> mezcla las preguntas y o las respuestas */
 function shuffled(elements) {
@@ -79,35 +38,63 @@ function getAnswersReview(data) {
   return allquestionAnswers;
 }
 
+const questionStructure = (props) => {
+  return `<section id="${props.id}">
+            <article>
+            <p class="breadcrumbs">Question ${props.questionNum}/${props.totalQuestions.length}</p>
+            <p id="${props.idQuestion}">${props.question}</p>
+            </article>
+            <label class="formLabel" for="answer1">${props.answers[0]}
+              <input type="radio" class="radio" name="answer" id="answer1" value="${props.answers[0]}">
+            </label>
+            <label class="formLabel" for="answer2">${props.answers[1]}
+              <input type="radio" class="radio" name="answer" id="answer2" value="${props.answers[1]}">
+            </label>
+            <label class="formLabel" for="answer3">${props.answers[2]}
+              <input type="radio" class="radio" name="answer" id="answer3" value="${props.answers[2]}">
+            </label>
+            <label class="formLabel" for="answer4">${props.answers[3]}
+              <input type="radio" class="radio" name="answer" id="answer4" value="${props.answers[3]}">
+            </label>
+          </section>`
+}
+
+
 //Pinta en el DOM las preguntas y respuestas una a una
-function printQuestion(object) {
-  let answers = shuffled( getAnswersOneQuestion(object) );
+function printQuestion(object, elementSelector) {
 
-  getElement('#quiz').innerHTML =
-  `<section id="quizQuestion">
-     <article>
-       <p class="breadcrumbs">Question ${currentQuestionNumber}/${data.results.length}</p>
-       <p id="question">${object.question}</p>
-     </article>
-     <label class="formLabel" for="answer1">${answers[0]}
-       <input type="radio" class="radio" name="answer" id="answer1" value="${answers[0]}">
-     </label>
-     <label class="formLabel" for="answer2">${answers[1]}
-       <input type="radio" class="radio" name="answer" id="answer2" value="${answers[1]}">
-     </label>
-     <label class="formLabel" for="answer3">${answers[2]}
-       <input type="radio" class="radio" name="answer" id="answer3" value="${answers[2]}">
-     </label>
-     <label class="formLabel" for="answer4">${answers[3]}
-       <input type="radio" class="radio" name="answer" id="answer4" value="${answers[3]}">
-     </label>
-  </section>`
+  if (object === data.results) {
+    let answers = shuffled( getAnswersOneQuestion(object) );
+    let questionProps = {
+      idQuestion: 'quizQuestion',
+      questionNum: currentQuestionNumber,
+      question: data.results.question,
+      totalQuestions: data.results.length,
+      answers,
+    }
+    getElement(elementSelector).innerHTML = questionStructure(questionProps);
 
-   //Asignación del evento a los label y radio buttons
-   const labels = document.querySelectorAll('.formLabel');
-   const radioButtons = document.querySelectorAll('.radio');
-   setEventListenerOfClickEvent([...labels, ...radioButtons], handleSelectAnswer);
+    //Asignación del evento a los label y radio buttons
+    const labels = document.querySelectorAll('.formLabel');
+    const radioButtons = document.querySelectorAll('.radio');
+    setEventListenerOfClickEvent([...labels, ...radioButtons], handleSelectAnswer);
+  }
+  else {
+    let answers = getAnswersOneQuestion(object);
+    let questionProps = {
+      idQuestion: 'reviewQuestion',
+      questionNum: currentQuestionNumber,
+      question: gamesPlayed,
+      totalQuestions: data.results.length,
+      answers,
+    }
+    gamesPlayed.push(questionStructure(questionProps));
+
+    let correctAnswers = getAllCorrectAnswer();
+    const questions = data.results;
+  }
 };
+
 
 // //Pinta en el DOM las preguntas y respuestas una a una
 const printNextQuestion = () => {
@@ -159,6 +146,14 @@ const getComparedAnswers = () => {
   return correctAnswers.map((answer, index) => answer === playerAnswer[index])
 }
 
+const setResultHeader = () => {
+  const score = getComparedAnswers()
+               .filter(question => question === true).length;
+               console.log('score', score);
+               console.log(data.results.length);
+  getElement('.scoreCard').src = `assets/images/scoreCards/${score}10.svg`;
+}
+
 //---> clean localStorage
 function cleanLocalStorage() {
   for (let index=0; index<data.results.length; index++) {
@@ -178,6 +173,11 @@ function storeDateTime() {
 function setGameTime() {
   let {date, hour} = storeDateTime();
   document.querySelector('.dataTime').innerHTML = `Game date: ${date}, Game Hour:${hour}`;
+}
+
+// Guardar selecciones del usuario
+const answerOfQuestion = (object) => {
+
 }
 
 //---> Asigna el evento click a una colección
@@ -201,24 +201,77 @@ const addClass = (elementWhereAdd, newClass) => elementWhereAdd.classList.add(ne
 const getElement = (selector) => document.querySelector(selector);
 const getElements = (selectorArr) => selectorArr.map(selector => getElement(selector));
 
+
+//Actualizar nickName
+const updateNickName = (e) => {
+  e.preventDefault();
+
+  let shortName = getElement('#nickName').value;
+
+  if (shortName) {
+    hideElement('#nickName').classList.add('unvisible');
+    shortName = '';
+    getElement('.saveNicknameBtn').innerHTML = update;
+  }
+}
+
+
 //Despliegado de las secciones de la app
 function navigateToRegistration() {
-  let elementsToHide = getElements(['#avatarUser', '#headerMenu', '#home', '#results', '#play', '#next', '#seeResults', '.navHamburgerMenu']);
+  let elementsToHide = getElements([
+    '#avatarUser', 
+    '#headerMenu', 
+    '#home', 
+    '#results', 
+    '#play', 
+    '#next', 
+    '#seeResults', 
+    '.navHamburgerMenu'
+  ]);
   hideElements(elementsToHide);
 }
 navigateToRegistration() //inicialización del juego
 
 
 function navigateToHome() {
-  let elementsToHide = getElements(['#registration', '#quiz', '#results', '#review', '#logIn', '#next', '#seeResults', '#footerMenu','.navHamburgerMenu']);
-  let elementsToShow = getElements(['#avatarUser', '#headerMenu', '#home', '#play']);
+  let elementsToHide = getElements([
+    '#registration', 
+    '#quiz', 
+    '#results', 
+    '#review'
+    , '#logIn', 
+    '#next', 
+    '#seeResults', 
+    '#footerMenu',
+    '.navHamburgerMenu'
+  ]);
+  let elementsToShow = getElements([
+    '#avatarUser', 
+    '#headerMenu', 
+    '#home', 
+    '#play'
+  ]);
   hideElements(elementsToHide);
   showElements(elementsToShow);
 }
 
 function navigateToQuiz() {
-  let elementsToHide = getElements(['#registration', '#home' , '#results', '#review', '#logIn', '#play', '#seeResults', '#footerMenu']);
-  let elementsToShow = getElements(['#avatarUser', '#headerMenu', '#quiz', '#next']);
+  let elementsToHide = getElements([
+    '#registration', 
+    '#home' ,
+     '#results', 
+     '#review', 
+     '#logIn', 
+     '#play', 
+     '#seeResults', 
+     '#footerMenu'
+  ]);
+  let elementsToShow = getElements([
+    '#avatarUser', 
+    '#headerMenu', 
+    '#quiz', 
+    '#next'
+  ]);
   hideElements(elementsToHide);
   showElements(elementsToShow);
 
@@ -227,17 +280,32 @@ function navigateToQuiz() {
 };
 
 function navigateToResults() {
+  setResultHeader();
   questionIndex = 0;
   currentQuestionNumber = 1;
-  let elementsToHide = getElements(['#registration', '#home', '#quiz', '#review', '#logIn', '#play', '#next', '#seeResults']);
-  let elementsToShow = getElements(['#avatarUser', '#headerMenu', '#footerMenu', '#results']);
+  let elementsToHide = getElements([
+    '#registration', 
+    '#home', 
+    '#quiz', 
+    '#review', 
+    '#logIn', 
+    '#play', 
+    '#next', 
+    '#seeResults'
+  ]);
+  let elementsToShow = getElements([
+    '#avatarUser', 
+    '#headerMenu', 
+    '#footerMenu', 
+    '#results'
+  ]);
   hideElements(elementsToHide);
   showElements(elementsToShow);
 
   setGameTime();
   getComparedAnswers();
-  setUsersCollectionStructure();
   cleanLocalStorage();
+
   getElement('#navigateHomeBtn').addEventListener('click', navigateToHome);
   getElement('#navigateToQuizBtn').addEventListener('click', navigateToQuiz);
   getElement('#navigateReviewBtn').addEventListener('click', navigateToReview);
@@ -256,9 +324,7 @@ function navigateToReview() {
 
 const handleHamburguerMenu = () => getElement('.navHamburgerMenu').classList.toggle('hidden');
 
-
 //Partimos de estos datos que son inventados
-
 let games = {
   game01: {
      date: "2022-05-23",
@@ -334,178 +400,8 @@ let config = {
 };
 
  let scoring = new Chart(canvasElement, config)
-//-------------------------------------------------------------------------------------
-//--> Carrusel <--
-// class Carousel {
-//   constructor(opts = {}) {
-//     this.bind();
 
-//     this.opts = {
-//       target: opts.target || "carousel",
-//     };
-
-//     // Select the carousel, its items, and the control buttons
-//     this.carousel = document.getElementById(this.opts.target);
-//     this.items = this.carousel.getElementsByClassName("item");
-//     this.prevBtn = document.getElementById("prev");
-//     this.nextBtn = document.getElementById("next");
-
-//     // Prepare to limit the direction in which the carousel can slide,
-//     // and to control how much the carousel slides on each interaction.
-//     // To slide the carousel by a single slide, we need to know the
-//     // carousel width, and the margin between each item.
-//     this.carouselWidth = this.carousel.offsetWidth;
-//     this.itemWidth = Math.round(
-//       this.items[1].getBoundingClientRect().left -
-//         this.items[0].getBoundingClientRect().left
-//     );
-//     this.itemMarginRight = Math.round(
-//       this.items[1].getBoundingClientRect().left -
-//         this.items[0].getBoundingClientRect().right
-//     );
-
-//     // Define x-axis offset properties to calculate the slide distance,
-//     // and a maximum width for an upper bound.
-//     // These offsets work with mouse or touch.
-//     this.offset = 0;
-//     this.touchOffset = 0;
-//     this.maxX = -(
-//       this.itemWidth * this.items.length -
-//       this.itemMarginRight -
-//       this.carouselWidth
-//     );
-
-//     // Start/end positions calculated when a user begins dragging slides,
-//     // during the drag, and at the end of dragging.
-//     // The threshold represents how much a user drags before advancing
-//     // the slide.
-//     this.posX1 = 0;
-//     this.posX2 = 0;
-//     this.posInitial = this.offset;
-//     this.posFinal = this.offset;
-//     this.threshold = 80;
-
-//     // Next/prev control button click events
-//     this.prevBtn.addEventListener("click", this.prev);
-//     this.nextBtn.addEventListener("click", this.next);
-
-//     // Mouse event for dragging slides
-//     this.carousel.addEventListener("mousedown", this.dragStart);
-
-//     // Touch events
-//     this.carousel.addEventListener("touchstart", this.dragStart);
-//     this.carousel.addEventListener("touchmove", this.dragAction, {
-//       passive: true,
-//     });
-//     this.carousel.addEventListener("touchend", this.dragEnd);
-//   }
-
-//   bind() {
-//     [
-//       "toggleControlDisplay",
-//       "prev",
-//       "next",
-//       "dragStart",
-//       "dragAction",
-//       "dragEnd",
-//     ].forEach((fn) => (this[fn] = this[fn].bind(this)));
-//   }
-
-//   toggleControlDisplay() {
-//     if (this.offset === 0) {
-//       this.prevBtn.style.display = "none";
-//     } else if (this.offset === this.maxX) {
-//       this.nextBtn.style.display = "none";
-//     } else {
-//       this.prevBtn.style.display = "block";
-//       this.nextBtn.style.display = "block";
-//     }
-//   }
-
-//   prev() {
-//     if (this.offset !== 0) {
-//       this.offset += this.itemWidth;
-//       this.carousel.style.transform = `translate3d(${this.offset}px, 0, 0)`;
-//       this.touchOffset = this.offset;
-//     }
-//     this.toggleControlDisplay();
-//   }
-
-//   next() {
-//     if (this.offset !== this.maxX) {
-//       this.offset -= this.itemWidth;
-//       this.carousel.style.transform = `translate3d(${this.offset}px, 0, 0)`;
-//       this.touchOffset = this.offset;
-//     }
-//     this.toggleControlDisplay();
-//   }
-
-//   dragStart(e) {
-//     e = e || window.event;
-//     e.preventDefault();
-
-//     this.posInitial = this.offset;
-
-//     if (e.type === "touchstart") {
-//       this.posX1 = e.touches[0].clientX;
-//     } else {
-//       this.posX1 = e.clientX;
-//       document.onmouseup = this.dragEnd;
-//       document.onmousemove = this.dragAction;
-//     }
-//   }
-
-//   dragAction(e) {
-//     e = e || window.event;
-
-//     if (e.type === "touchmove") {
-//       this.posX2 = this.posX1 - e.touches[0].clientX;
-//       this.posX1 = e.touches[0].clientX;
-//     } else {
-//       this.posX2 = this.posX1 - e.clientX;
-//       this.posX1 = e.clientX;
-//     }
-//     if (this.touchOffset >= 0 || this.touchOffset <= this.maxX) {
-//       this.touchOffset = this.offset;
-//     }
-
-//     this.touchOffset -= this.posX2;
-//     this.carousel.style.transform = `translate3d(${this.touchOffset}px, 0, 0)`;
-//   }
-
-//   dragEnd() {
-//     this.posFinal = this.touchOffset;
-//     if (this.posFinal - this.posInitial < -this.threshold) {
-//       this.next();
-//     } else if (this.posFinal - this.posInitial > this.threshold) {
-//       this.prev();
-//     } else {
-//       this.carousel.style.transform = `translate3d(${this.posInitial}px, 0, 0)`;
-//       this.touchOffset = this.offset;
-//     }
-
-//     document.onmouseup = null;
-//     document.onmousemove = null;
-//   }
-// }
-
-// new Carousel();
-
-// //Seleccionar una imagen e incluirla como imagen avatar del usuario;
-
-// function cambiarAvatar(nombreImagen) {
-//   var avatar = document.getElementById("avatarUser");
-//   avatar.style.backgroundImage =
-//     "url('assets/images/avatars/" + nombreImagen + "')";
-//   avatar.style.backgroundSize = "cover";
-// }
-
-//-------------------------------------------------------------------------------------
-
-// let carruselElements = getElements(["#avtr01.jpg", "#avtr02.jpg", "#avtr03.jpg", "#avtr04.jpg", "#avtr05.jpg", "#avtr_default.jpg"]);
-// setEventListenerOfClickEvent(carruselElements, cambiarAvatar);
-
-//Eventos
+getElement('.saveNicknameBtn').addEventListener('click', updateNickName);
 getElement('#avatarUser').addEventListener('click', navigateToHome);
 getElement('.navigateToHomeBtn').addEventListener('click', navigateToHome);
 getElement('.navigateToQuizBtn').addEventListener('click', navigateToQuiz);

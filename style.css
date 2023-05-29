@@ -102,6 +102,9 @@ input {
   list-style: none;
   font-size: 2rem;
 }
+.unvisible {
+  visibility: hidden;
+}
 .hidden {
   display: none;
 }
