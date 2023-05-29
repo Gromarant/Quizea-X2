@@ -1,12 +1,139 @@
 // Llamada a la API
-async function getData() {
+function getData() {
   fetch("https://opentdb.com/api.php?amount=10&type=multiple")
-  let response = await response.json();
-  let data = await response;
-  return data;
+                .then(res=>res.json())
+                .then(apiData => {
+                  let data = apiData;
+                  navigateToHome();
+                })
+                .catch(error => console.log(error));
 }
-let data = await getData(); 
 
+let data = {
+  "response_code": 0,
+  "results": [
+    {
+      "category": "Geography",
+      "type": "multiple",
+      "difficulty": "easy",
+      "question": "Which of these African countries list &quot;Spanish&quot; as an official language?",
+      "correct_answer": "Equatorial Guinea",
+      "incorrect_answers": [
+        "Guinea",
+        "Cameroon",
+        "Angola"
+      ]
+    },
+    {
+      "category": "Entertainment: Books",
+      "type": "multiple",
+      "difficulty": "medium",
+      "question": "The title of Adolf Hitler&#039;s autobiography &quot;Mein Kampf&quot; is what when translated to English?",
+      "correct_answer": "My Struggle",
+      "incorrect_answers": [
+        "My Hatred",
+        "My Sadness",
+        "My Desire"
+      ]
+    },
+    {
+      "category": "Entertainment: Japanese Anime & Manga",
+      "type": "multiple",
+      "difficulty": "medium",
+      "question": "In the &quot;Toaru Majutsu no Index&quot; anime, Touma Kamijou is a level 0 esper that has the ability to do what?",
+      "correct_answer": "Dispell any esper or magical powers",
+      "incorrect_answers": [
+        "Teleport",
+        "Make telepathic communications",
+        "Create electricity from his own body"
+      ]
+    },
+    {
+      "category": "Entertainment: Video Games",
+      "type": "multiple",
+      "difficulty": "easy",
+      "question": "Which of the following is not a faction in Tom Clancy&#039;s The Division?",
+      "correct_answer": "CDC",
+      "incorrect_answers": [
+        "Cleaners",
+        "Last Man Batallion",
+        "Rikers"
+      ]
+    },
+    {
+      "category": "Entertainment: Film",
+      "type": "multiple",
+      "difficulty": "medium",
+      "question": "In which movie does Robin Williams&#039; character have to disguise themselves into a woman?",
+      "correct_answer": "Mrs. Doubtfire",
+      "incorrect_answers": [
+        "Old Dogs",
+        "Jumanji",
+        "Awakenings"
+      ]
+    },
+    {
+      "category": "Entertainment: Books",
+      "type": "multiple",
+      "difficulty": "easy",
+      "question": "What is the name of Sherlock Holmes&#039;s brother?",
+      "correct_answer": "Mycroft Holmes",
+      "incorrect_answers": [
+        "Mederi Holmes",
+        "Martin Holmes",
+        "Herbie Hancock Holmes"
+      ]
+    },
+    {
+      "category": "Entertainment: Japanese Anime & Manga",
+      "type": "multiple",
+      "difficulty": "easy",
+      "question": "What animation studio produced &quot;Gurren Lagann&quot;?",
+      "correct_answer": "Gainax",
+      "incorrect_answers": [
+        "Kyoto Animation",
+        "Pierrot",
+        "A-1 Pictures"
+      ]
+    },
+    {
+      "category": "Entertainment: Board Games",
+      "type": "multiple",
+      "difficulty": "medium",
+      "question": "Europa Universalis is a strategy video game based on which French board game?",
+      "correct_answer": "Europa Universalis",
+      "incorrect_answers": [
+        "Europe and the Universe",
+        "Europa!",
+        "Power in Europe"
+      ]
+    },
+    {
+      "category": "Mythology",
+      "type": "multiple",
+      "difficulty": "easy",
+      "question": "What mytological creatures have women&#039;s faces and vultures&#039; bodies?",
+      "correct_answer": "Harpies",
+      "incorrect_answers": [
+        "Mermaids",
+        "Nymph",
+        "Lilith"
+      ]
+    },
+    {
+      "category": "Science: Computers",
+      "type": "multiple",
+      "difficulty": "hard",
+      "question": "Which of the following computer components can be built using only NAND gates?",
+      "correct_answer": "ALU",
+      "incorrect_answers": [
+        "CPU",
+        "RAM",
+        "Register"
+      ]
+    }
+  ]
+};
 // Inicialización de variables
 let questionIndex = 0;
 let currentQuestionNumber = 1;
